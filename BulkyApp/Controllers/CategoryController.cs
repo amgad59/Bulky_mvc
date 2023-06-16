@@ -22,11 +22,11 @@ namespace BulkyApp.Controllers
         }
         [HttpPost]
         public IActionResult Create(Category c)
-        {
+        {/*
             if(c.Name == "hey")
             {
                 ModelState.AddModelError("", "can't have numbers bruv");
-            }
+            }*/
             if (ModelState.IsValid)
             {
                 _db.Categories.Add(c);
