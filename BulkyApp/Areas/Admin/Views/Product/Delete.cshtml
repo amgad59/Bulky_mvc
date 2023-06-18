@@ -1,0 +1,15 @@
+﻿@model Product
+
+<form method="post">
+    <input asp-for="Id" hidden />
+            <legend>Disabled fieldset example</legend>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <input asp-for="Description" disabled type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label asp-for="ListPrice" class="form-label"></label>
+                <input asp-for="ListPrice" disabled type="text" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-danger">Delete</button>
+</form>
