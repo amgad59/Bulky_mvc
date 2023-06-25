@@ -5,6 +5,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.Drawing;
+using Bulky.Utilities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Bulky.Models
 {
@@ -17,15 +22,14 @@ namespace Bulky.Models
         public string Description { get; set; }
         [Required]
         [DisplayName("List Price")]
-        [Range(0, 10000, ErrorMessage = "must be 0-100")]
+        [Range(0, 10000, ErrorMessage = "must be 0-10000")]
         public int ListPrice { get; set; }
-	}
+		public int CategoryId { get; set; }
+		[ForeignKey("CategoryId")]
+        [ValidateNever]
+        public Category Category { get; set; }
+        public string ImageUrl { get; set; }
+        public int Discount { get; set; }
+        public virtual ICollection<ProductSize> ProductSizes { get; set; }
+    }
 }
-/*
-		[Key]
-		public int Id { get; set; }
-		[Required]
-		public string description;
-		[Required]
-		[Display(Name = "List price")]
-		public int ListPrice;*/

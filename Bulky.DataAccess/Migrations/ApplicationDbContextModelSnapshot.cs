@@ -70,7 +70,17 @@ namespace Bulky.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Discount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -79,27 +89,120 @@ namespace Bulky.DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("Products");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            CategoryId = 1,
                             Description = "A white hoodie with butterflies on it",
+                            Discount = 0,
+                            ImageUrl = "",
                             ListPrice = 350
                         },
                         new
                         {
                             Id = 2,
+                            CategoryId = 1,
                             Description = "A black hoodie with butterflies on it",
+                            Discount = 0,
+                            ImageUrl = "",
                             ListPrice = 450
                         },
                         new
                         {
                             Id = 3,
+                            CategoryId = 1,
                             Description = "A white hoodie with Sinatraa on it",
+                            Discount = 0,
+                            ImageUrl = "",
                             ListPrice = 400
                         });
+                });
+
+            modelBuilder.Entity("Bulky.Models.ProductSize", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductSizes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DisplayName = "S",
+                            Name = "Small"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DisplayName = "M",
+                            Name = "Medium"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DisplayName = "L",
+                            Name = "Large"
+                        });
+                });
+
+            modelBuilder.Entity("ProductProductSize", b =>
+                {
+                    b.Property<int>("ProductSizesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("productsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductSizesId", "productsId");
+
+                    b.HasIndex("productsId");
+
+                    b.ToTable("ProductProductSize");
+                });
+
+            modelBuilder.Entity("Bulky.Models.Product", b =>
+                {
+                    b.HasOne("Bulky.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("ProductProductSize", b =>
+                {
+                    b.HasOne("Bulky.Models.ProductSize", null)
+                        .WithMany()
+                        .HasForeignKey("ProductSizesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bulky.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("productsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

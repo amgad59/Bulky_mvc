@@ -13,6 +13,7 @@
  */
 @import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600&display=swap");
 
+
 :root,
 [data-bs-theme=light] {
     --bs-blue: #007bff;
@@ -604,6 +605,7 @@ progress {
 [hidden] {
     display: none !important;
 }
+
 
 .lead {
     font-size: 1.25rem;
@@ -7527,6 +7529,7 @@ textarea.form-control-lg {
     z-index: 1030;
 }
 
+
 .fixed-bottom {
     position: fixed;
     right: 0;
@@ -7959,6 +7962,10 @@ textarea.form-control-lg {
     left: 50% !important;
 }
 
+.top-85 {
+    top: 85% !important;
+}
+
 .start-100 {
     left: 100% !important;
 }
@@ -8207,6 +8214,13 @@ textarea.form-control-lg {
 
 .vh-100 {
     height: 100vh !important;
+}
+
+.vh-75 {
+    height: 75vh !important;
+}
+.vh-50 {
+    height: 50vh !important;
 }
 
 .min-vh-100 {
@@ -9028,6 +9042,7 @@ textarea.form-control-lg {
     --bs-text-opacity: 1;
     color: rgba(var(--bs-black-rgb), var(--bs-text-opacity)) !important;
 }
+
 
 .text-white {
     --bs-text-opacity: 1;
@@ -13572,3 +13587,110 @@ th {
 .card .h6 {
     color: inherit;
 }
+.easeload {
+    opacity: 0;
+    -webkit-transition: opacity 1s ease-out ;
+}
+.banner-section {
+
+    animation: slideInLeft 1s ease-out;
+}
+.fit-image-to-window {
+    width: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100vh;
+}
+.full-width {
+    max-width: 100%;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+@keyframes slideInLeft {
+    0% {
+        opacity: 0%;
+    }
+
+    100% {
+        opacity: 100%;
+    }
+}
+
+.shop-now-button {
+    position: absolute;
+    top: 25%;
+    width: 100%;
+    max-width: 130px;
+    max-height: 44px;
+    color: forestgreen;
+    background-color: #1f2021;
+}
+
+
+.featured-product-card {
+    max-width: 950px;
+    max-height:contain;
+    margin: auto;
+}
+
+
+.btn123 {
+    text-decoration: none;
+    border: 1px solid rgb(146, 148, 248);
+    position: relative;
+    overflow: hidden;
+}
+
+    .btn123:hover {
+        box-shadow: 1px 1px 25px 10px rgba(146, 148, 248, 0.4);
+    }
+
+    .btn123:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient( 120deg, transparent, rgba(146, 148, 248, 0.4), transparent );
+        transition: all 650ms;
+    }
+
+    .btn123:hover:before {
+        left: 100%;
+    }
+
+.animated-card {
+    position: relative;
+}
+
+    .animated-card .image-top {
+        position: absolute;
+        top: 0;
+        left: 0;
+        min-width: 100%;
+        min-height: 100%;
+        transition: opacity .4s;
+        opacity: 0;
+    }
+
+    .animated-card:hover .image-top {
+        opacity: 1;
+    }
+    .animated-card:hover .image-bottom {
+        transition: opacity .4s;
+        opacity: 0;
+    }
+    .animated-card .button-top {
+        position: absolute;
+        transition: opacity .4s;
+        opacity: 0;
+    }
+
+    .animated-card:hover .button-top {
+        opacity: 1;
+    }
