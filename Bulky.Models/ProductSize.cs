@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bulky.Models
 {
@@ -17,7 +18,9 @@ namespace Bulky.Models
         public string Name { get; set; }
         [Required]
         public string DisplayName { get; set; }
-        public virtual ICollection<Product> products { get; set; }
+        [NotMapped]
+        public virtual bool isSelected { get; set; }
+        public virtual List<Product> products { get; set; }
 
     }
 }

@@ -30,6 +30,7 @@ namespace Bulky.Models
         public Category Category { get; set; }
         public string ImageUrl { get; set; }
         public int Discount { get; set; }
-        public virtual ICollection<ProductSize> ProductSizes { get; set; }
+        [ValidateNever]
+        public virtual List<ProductSize> ProductSizes { get; set; }
     }
 }

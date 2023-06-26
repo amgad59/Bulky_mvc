@@ -4,19 +4,28 @@
 <div class="container">
 <form class="row g-3" method="post" enctype="multipart/form-data">
     <input asp-for="product.Id" hidden />
-    <input asp-for="product.ImageUrl" hidden />
+        <input asp-for="product.ImageUrl" />                
+@*         @for (int i = 0; i < Model.product.ProductSizes.Count; i++)
+        {
+            <input asp-for="@Model.product.ProductSizes[i].Id" hidden />
+            <input asp-for="@Model.product.ProductSizes[i].Name" hidden />
+            <input asp-for="@Model.product.ProductSizes[i].DisplayName" hidden />
+
+        } *@
         <div class="form-check">
             <div>
                 <label asp-for="product.ProductSizes" class="p-0"></label>
-                @foreach (var size in Model.ProductSizeList)
-                {
+                @for (int i = 0;i < Model.ProductSizeList.Count;i++)
+                    {
+                    <input asp-for="@Model.ProductSizeList[i].Id" hidden/>
+                    <input asp-for="@Model.ProductSizeList[i].Name" hidden />
+                    <input asp-for="@Model.ProductSizeList[i].DisplayName" hidden />
+
                     <div class="form-check">
-                        <input asp-for="@size" hidden />
-                        <input type="checkbox" value="@size.Name" class="form-check-input" />
-                        <label class="form-check-label">@size.Name</label>
+                        <input asp-for="@Model.ProductSizeList[i].isSelected" checked="@(Model.product.ProductSizes.Contains(Model.ProductSizeList[i]) ? true : false)" class="form-check-input" />
+                        <label class="form-check-label">@Model.ProductSizeList[i].Name</label>
                     </div>
-                }
-                <span asp-validation-for="product.ProductSizes" class="text-danger"></span>
+                    }
             </div>
         </div>
         <div class="border p-3 mt-4">

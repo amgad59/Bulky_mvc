@@ -14,6 +14,6 @@ namespace Bulky.Models
         [ValidateNever]
         public IEnumerable<SelectListItem> CategoryList { get; set; }
         [ValidateNever]
-        public IEnumerable<ProductSize> ProductSizeList { get; set; }
+        public List<ProductSize> ProductSizeList { get; set; }
     }
 }

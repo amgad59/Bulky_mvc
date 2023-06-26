@@ -11,5 +11,8 @@ namespace Bulky.DataAccess.Repository.IRepository
 	public interface IProductRepository : IRepository<Product>
 	{
 		void update(Product product);
-	}
+		public void deleteSize(Product product, int productSizeId);
+		public void addSize(Product product, int productSizeId);
+
+    }
 }
