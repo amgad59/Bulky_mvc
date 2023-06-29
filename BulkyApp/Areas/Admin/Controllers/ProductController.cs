@@ -1,12 +1,17 @@
 ﻿using Bulky.DataAccess.Repository;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
+using Bulky.Models.ViewModels;
+using Bulky.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Data;
 
 namespace BulkyApp.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -52,7 +57,7 @@ namespace BulkyApp.Areas.Admin.Controllers
                 if (file != null)
                 {
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string productPath = Path.Combine(wwwRootPath, @"images\product\");
+                    string productPath = Path.Combine(wwwRootPath, @"images\product");
                     if (!string.IsNullOrEmpty(productVM.product.ImageUrl))
                     {
                         var oldImagePath = Path.Combine(wwwRootPath, productVM.product.ImageUrl.TrimStart('\\'));
@@ -65,7 +70,7 @@ namespace BulkyApp.Areas.Admin.Controllers
                     {
                         file.CopyTo(fileStream);
                     }
-                    productVM.product.ImageUrl = @"images\product\" + fileName;
+                    productVM.product.ImageUrl = @"\images\product\" + fileName;
                 }
 
 
@@ -73,10 +78,12 @@ namespace BulkyApp.Areas.Admin.Controllers
                 if (productVM.product.Id == 0)
                     _unitOfWork.Product.Add(productVM.product);
                 else
+                {
                     _unitOfWork.Product.update(productVM.product);
+                }
                 _unitOfWork.save();
                 int size = productVM.ProductSizeList.Count;
-                productVM.product = _unitOfWork.Product.Get(u => u.Id == productVM.product.Id,includeProperties: "ProductSizes");
+                productVM.product = _unitOfWork.Product.Get(u => u.Id == productVM.product.Id, includeProperties: "ProductSizes");
                 for (int i = 0; i < size; i++)
                 {
                     if (!productVM.ProductSizeList[i].isSelected)
@@ -109,7 +116,7 @@ namespace BulkyApp.Areas.Admin.Controllers
         }
         #region API CALLS
         [HttpGet]
-        public IActionResult Getall()
+        public IActionResult GetAll()
         {
             List<Product> products = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductSizes").ToList();
             return Json(new { data = products });

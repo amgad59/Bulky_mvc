@@ -1,17 +1,10 @@
-﻿@using Bulky.Utilities;
+﻿@using Bulky.Models.ViewModels;
 @model ProductVM
 
 <div class="container">
 <form class="row g-3" method="post" enctype="multipart/form-data">
-    <input asp-for="product.Id" hidden />
-        <input asp-for="product.ImageUrl" />                
-@*         @for (int i = 0; i < Model.product.ProductSizes.Count; i++)
-        {
-            <input asp-for="@Model.product.ProductSizes[i].Id" hidden />
-            <input asp-for="@Model.product.ProductSizes[i].Name" hidden />
-            <input asp-for="@Model.product.ProductSizes[i].DisplayName" hidden />
-
-        } *@
+        <input asp-for="product.Id" hidden />
+        <input asp-for="product.ImageUrl" hidden />
         <div class="form-check">
             <div>
                 <label asp-for="product.ProductSizes" class="p-0"></label>
@@ -22,7 +15,7 @@
                     <input asp-for="@Model.ProductSizeList[i].DisplayName" hidden />
 
                     <div class="form-check">
-                        <input asp-for="@Model.ProductSizeList[i].isSelected" checked="@(Model.product.ProductSizes.Contains(Model.ProductSizeList[i]) ? true : false)" class="form-check-input" />
+                        <input asp-for="@Model.ProductSizeList[i].isSelected" checked="@(Model.product.Id !=0 && Model.product.ProductSizes.Contains(Model.ProductSizeList[i]) ? true : false)" class="form-check-input" />
                         <label class="form-check-label">@Model.ProductSizeList[i].Name</label>
                     </div>
                     }
@@ -39,6 +32,11 @@
             <span asp-validation-for="product.ListPrice" class="text-danger"></span>
         </div>
         <div class="mb-3 row p-1">
+            <label asp-for="product.Discount" class="p-0"></label>
+            <input asp-for="product.Discount" class="form-control form-control-sm" type="number" aria-label=".form-control-sm example">
+                <span asp-validation-for="product.Discount" class="text-danger"></span>
+        </div>
+        <div class="mb-3 row p-1">
             <label asp-for="product.Description" class="p-0"></label>
             <textarea asp-for="product.Description" class="form-control" rows="3"></textarea>
             <span asp-validation-for="product.Description" class="text-danger"></span>
@@ -52,7 +50,7 @@
         </div>
         <div class="input-group mb-3">
             <label asp-for="product.ImageUrl" class="form-label"></label>
-            <input type="file" name="file">
+            <input asp-for="product.ImageUrl" type="file" name="file">
         </div>
         <div class="row">
             <div class="col-6 col-md-3">

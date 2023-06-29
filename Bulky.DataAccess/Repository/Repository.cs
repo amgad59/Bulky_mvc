@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Bulky.DataAccess.Repository
 {
@@ -34,11 +35,19 @@ namespace Bulky.DataAccess.Repository
 			dbSet.RemoveRange(entities);
 		}
 
-		public T Get(Expression<Func<T, bool>> expression, string? includeProperties = null)
+		public T Get(Expression<Func<T, bool>> expression, string? includeProperties = null, bool isTracked = false)
 		{
-			IQueryable<T> query = dbSet;
-			query = query.Where(expression); 
-			if (!string.IsNullOrEmpty(includeProperties))
+			IQueryable<T> query;
+            if (isTracked)
+			{
+				query = dbSet;
+            }
+            else
+            {
+				query = dbSet.AsNoTracking();
+            }
+            query = query.Where(expression);
+            if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (var property in includeProperties
                     .Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
@@ -47,7 +56,7 @@ namespace Bulky.DataAccess.Repository
                 }
             }
             return query.FirstOrDefault();
-		}
+        }
 
 		public IEnumerable<T> GetAll(string? includeProperties = null)
 		{

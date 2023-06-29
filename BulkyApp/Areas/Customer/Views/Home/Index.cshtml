@@ -1,5 +1,4 @@
-﻿
-
+﻿@model List<Product>
 <!-- banner section -->
 <section style="background-color: black;">
     <div class="container">
@@ -29,99 +28,19 @@
 
 <div class="container-fluid ms-1">
     <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4 p-4 h-100">
+        @foreach(var product in Model){
         <div class="col-md-6 col-lg-3 position-relative">
             <div class="animated-card card">
-                <a href="#">
-                <img src="~/images/Home/IMG_3327.jpg" alt="Card Back" class="image-bottom w-100 vh-50">
-                <img src="~/images/Home/IMG_3338.jpg" alt="Card Front" class="image-top w-100 vh-50">
+                    <a asp-action="Details" asp-route-productId="@product.Id">
+                <img src=@product.ImageUrl alt="Card Back" class="image-bottom w-100 vh-50">
+                <img src=@product.ImageUrl alt="Card Front" class="image-top w-100 vh-50">
                 </a>
-                <button type="button" class="button-top rounded-pill btn btn-primary position-absolute top-85 start-50 translate-middle">View now</button>
+                    <button type="button" asp-action="Details" asp-route-productId="@product.Id" class="button-top rounded-pill btn btn-primary position-absolute top-85 start-50 translate-middle">View now</button>
             </div>
-            <a href="#">Interference Tee</a>
-            <p>$30.00</p>
+                <a asp-action="Details" asp-route-productId="@product.Id">@product.Description</a>
+            <p>@product.ListPrice.ToString("c")</p>
         </div>
-        <div class="col-md-6 col-lg-3 position-relative">
-            <div class="animated-card">
-                <a href="#">
-                <img src="~/images/Home/IMG_3353.jpg" alt="Card Back" class="image-bottom w-100 vh-50">
-                <img src="~/images/Home/IMG_3364 (1).jpg" alt="Card Front" class="image-top w-100 vh-50">
-                </a>
-                <button type="button" class="button-top rounded-pill btn btn-primary position-absolute top-85 start-50 translate-middle">View now</button>
-            </div>
-            <a href="#">Interference Tee</a>
-            <p>$30.00</p>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="animated-card position-relative">
-                <a href="#">
-                <img src="~/images/Home/IMG_3327.jpg" alt="Card Back" class="image-bottom w-100 vh-50">
-                    <img src="~/images/Home/IMG_3338.jpg" alt="Card Front" class="image-top w-100 vh-50">
-                </a>
-                <button type="button" class="button-top rounded-pill btn btn-primary position-absolute top-85 start-50 translate-middle">View now</button>
-                
-            </div>
-            <a href="#">Interference Tee</a>
-            <p>$30.00</p>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="animated-card position-relative">
-                <a href="#">
-                <img src="~/images/Home/IMG_3353.jpg" alt="Card Back" class="image-bottom w-100 vh-50">
-                <img src="~/images/Home/IMG_3364 (1).jpg" alt="Card Front" class="image-top w-100 vh-50">
-                </a>
-                <button type="button" class="button-top rounded-pill btn btn-primary position-absolute top-85 start-50 translate-middle">View now</button>
-
-            </div>
-            <a href="#">Interference Tee</a>
-            <p>$30.00</p>
-        </div>
-        <div class="col-md-6 col-lg-3 position-relative">
-            <div class="animated-card card">
-                <a href="#">
-                <img src="~/images/Home/IMG_3327.jpg" alt="Card Back" class="image-bottom w-100 vh-50">
-                <img src="~/images/Home/IMG_3338.jpg" alt="Card Front" class="image-top w-100 vh-50">
-                </a>
-                <button type="button" class="button-top rounded-pill btn btn-primary position-absolute top-85 start-50 translate-middle">View now</button>
-
-            </div>
-            <a href="#">Interference Tee</a>
-            <p>$30.00</p>
-        </div>
-        <div class="col-md-6 col-lg-3 position-relative">
-            <div class="animated-card">
-                <a href="#">
-                <img src="~/images/Home/IMG_3353.jpg" alt="Card Back" class="image-bottom w-100 vh-50">
-                <img src="~/images/Home/IMG_3364 (1).jpg" alt="Card Front" class="image-top w-100 vh-50">
-                </a>
-                <button type="button" class="button-top rounded-pill btn btn-primary position-absolute top-85 start-50 translate-middle">View now</button>
-
-            </div>
-            <a href="#">Interference Tee</a>
-            <p>$30.00</p>
-        </div>
-        <div class="col-md-6 col-lg-3 position-relative">
-            <div class="animated-card">
-                <a href="#">
-                <img src="~/images/Home/IMG_3327.jpg" alt="Card Back" class="image-bottom w-100 vh-50">
-                <img src="~/images/Home/IMG_3338.jpg" alt="Card Front" class="image-top w-100 vh-50">
-                </a>
-                <button type="button" class="button-top rounded-pill btn btn-primary position-absolute top-85 start-50 translate-middle">View now</button>
-
-            </div>
-            <a href="#">Interference Tee</a>
-            <p>$30.00</p>
-        </div> 
-        <div class="col-md-6 col-lg-3 position-relative">
-            <div class="animated-card">
-                <a href="#">
-                <img src="~/images/Home/IMG_3353.jpg" alt="Card Back" class="image-bottom w-100 vh-50">
-                <img src="~/images/Home/IMG_3364 (1).jpg" alt="Card Front" class="image-top w-100 vh-50">
-                </a>
-                <button type="button" class="button-top rounded-pill btn btn-primary position-absolute top-85 start-50 translate-middle">View now</button>
-            </div>
-            <a href="#">Interference Tee</a>
-            <p>$30.00</p>
-        </div>
+        }
     </div>
 </div>
 @* 
