@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,20 +10,20 @@ using System.Threading.Tasks;
 
 namespace Bulky.Models
 {
-    public class ShoppingCart
+    public class OrderDetail
     {
         public int Id { get; set; }
+        [Required]
+        public int OrderHeaderId { get; set; }
+        [ForeignKey(nameof(OrderHeaderId))]
+        [ValidateNever]
+        public OrderHeader OrderHeader { get; set; }
+        [Required]
         public int ProductId { get; set; }
+        [ValidateNever]
         [ForeignKey(nameof(ProductId))]
-        [ValidateNever]
         public Product Product { get; set; }
-        [Range(1,1000,ErrorMessage ="must be between 1 and 1000")]
-        public int count { get; set; }
-        public string ApplicationUserId { get; set; }
-        [ForeignKey(nameof(ApplicationUserId))]
-        [ValidateNever]
-        public ApplicationUser ApplicationUser { get; set; }
-        [NotMapped]
-        public int price { get; set; }
+        public int Count { get; set; }
+        public int Price { get; set; }
     }
 }

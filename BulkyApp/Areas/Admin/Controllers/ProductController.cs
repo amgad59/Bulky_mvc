@@ -114,7 +114,9 @@ namespace BulkyApp.Areas.Admin.Controllers
             List<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductSizes").ToList();
             return View(productList);
         }
+
         #region API CALLS
+
         [HttpGet]
         public IActionResult GetAll()
         {
