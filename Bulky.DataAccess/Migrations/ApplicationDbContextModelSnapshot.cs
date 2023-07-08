@@ -118,6 +118,9 @@ namespace Bulky.DataAccess.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
                     b.Property<string>("OrderStatus")
                         .HasColumnType("nvarchar(max)");
 
@@ -126,9 +129,6 @@ namespace Bulky.DataAccess.Migrations
 
                     b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentIntentId")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaymentStatus")
                         .HasColumnType("nvarchar(max)");
@@ -146,6 +146,9 @@ namespace Bulky.DataAccess.Migrations
 
                     b.Property<string>("TrackingNumber")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TransactionId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

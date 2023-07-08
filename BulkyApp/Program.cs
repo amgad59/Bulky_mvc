@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Bulky.Utilities;
 using BulkyApp.Services.IServices;
 using BulkyApp.Services;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);  
 
@@ -16,8 +17,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")));
 
-/*builder.Services.Configure<PayMobSettings>(builder.Configuration.GetSection("PayMob"));
-*/
+builder.Services.Configure<PayMobSettings>(builder.Configuration.GetSection("PayMob"));
+builder.Services.AddOptions();
+
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddHttpClient<IPayMobService, PayMobService>();

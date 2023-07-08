@@ -1,35 +1,34 @@
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Bulky.Models.API;
+using Bulky.Utilities;
 using BulkyApp.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using NuGet.Common;
 using System.Diagnostics;
 using System.Security.Claims;
+using static BulkyApp.Services.PayMobService;
 
 namespace BulkyApp.Areas.Customer.Controllers
 {
 	[Area("Customer")]
 	public class HomeController : Controller
     {
-        IPayMobService _payMobService;
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
-
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, IPayMobService payMobService)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
-            _payMobService = payMobService;
         }
 
         public async Task<IActionResult> Index()
 		{
             List<Product> products = _unitOfWork.Product.GetAll(includeProperties: "ProductSizes").ToList();
-            var x = await _payMobService.FirstStep<APIResponse>();
-            var y = await _payMobService.SecondStep<APIResponse>(x.token);
-            var z = await _payMobService.ThirdStep<APIResponse>(x.token,y.id);
-			return View(products);
+
+            return View(products);
         }
         public IActionResult Details(int productId)
 		{

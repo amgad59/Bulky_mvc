@@ -1,52 +1,53 @@
 ﻿using Bulky.Models.API;
+using Bulky.Models.API.DTO;
+using Bulky.Utilities;
 using BulkyApp.Services.IServices;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using static Bulky.Utilities.SD;
 
 namespace BulkyApp.Services
 {
     public class PayMobService : BaseService,IPayMobService
     {
-        private string FirstStepUrl;
-        private string SecondStepUrl;
-        private string ThirdStepUrl;
-        private string API_Key;
         private string token;
-        public PayMobService(IHttpClientFactory httpClient, IConfiguration configuration) : base(httpClient)
+        private PayMobSettings _payMobSettings;
+        public PayMobService(IHttpClientFactory httpClient, IOptions<PayMobSettings> payMobSettings) : base(httpClient)
         {
-            FirstStepUrl = configuration.GetValue<string>("ServiceUrls:PayMobFirst");
-            SecondStepUrl = configuration.GetValue<string>("ServiceUrls:PayMobSecond");
-            ThirdStepUrl = configuration.GetValue<string>("ServiceUrls:PayMobThird");
-            API_Key = configuration.GetValue<string>("PayMob:API_Key");
+            _payMobSettings = payMobSettings.Value;
         }
-
-        public Task<T> FirstStep<T>()
+        public async Task<string> PayMobSetup(Dictionary<string,object> FirstStepPayload
+            ,Dictionary<string, object> SecondStepPayload)
         {
-            return SendAsync<T>(new APIRequest()
+            var x = await FirstPayMobStep<PayMobFirstAPIResponse>();
+            FirstStepPayload["auth_token"] = x.token;
+            var y = await SecondPayMobStep<PayMobSecondAPIResponse>(x.token, FirstStepPayload);
+            SecondStepPayload["auth_token"] = x.token;
+            SecondStepPayload["order_id"] = y.id;
+            var z = await ThirdPayMobStep<PayMobThirdAPIResponse>(x.token, y.id, SecondStepPayload);
+            return z.token;
+        }
+        public async Task<T> FirstPayMobStep<T>()
+        {
+            return await SendAsync<T>(new APIRequest()
             {
-                Url = FirstStepUrl,
+                Url = _payMobSettings.FirstStepUrl,
                 ApiType = ApiType.POST,
                 data = new Dictionary<string, object> {
                     {
-                        "api_key", API_Key
+                        "api_key", _payMobSettings.API_Key
                     }
                 }
             });
         }
-        public class Item
+        public async Task<T> SecondPayMobStep<T>(string token, Dictionary<string, object> Payload)
         {
-            public string name;
-            public int amount_cents;
-            public string description;
-            public int quantity;
-        }
-        public Task<T> SecondStep<T>(string token)
-        {
-            return SendAsync<T>(new APIRequest()
+            return await SendAsync<T>(new APIRequest()
             {
-                Url = SecondStepUrl,
+                Url = _payMobSettings.SecondStepUrl,
                 ApiType = ApiType.POST,
-                data = new Dictionary<string, object> {
+                data = Payload 
+            /*new Dictionary<string, object> {
                     {
                     "auth_token",  token
                     },
@@ -54,16 +55,17 @@ namespace BulkyApp.Services
                     { "amount_cents", "2000" },
                     { "currency", "EGP" },
                     { "items", new Item[]{ new Item {name= "ASC1515",amount_cents= 500000,description= "Smart Watch",quantity=1 } } }
-            }
+            }*/
             });
         }
-        public Task<T> ThirdStep<T>(string token, int id)
+        public async Task<T> ThirdPayMobStep<T>(string token, int id,Dictionary<string, object> Payload)
         {
-            return SendAsync<T>(new APIRequest()
+            return await SendAsync<T>(new APIRequest()
             {
-                Url = ThirdStepUrl,
+                Url = _payMobSettings.ThirdStepUrl,
                 ApiType = ApiType.POST,
-                data = new Dictionary<string, object> {
+                data = Payload
+                /*new Dictionary<string, object> {
 
                     { "auth_token",token },
                     { "amount_cents", "100" },
@@ -86,7 +88,7 @@ namespace BulkyApp.Services
                     },
                     { "currency", "EGP"},
                     { "integration_id", 3951279}
-            }
+                }*/
             });
         }
     }

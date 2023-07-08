@@ -1,6 +1,7 @@
 ﻿using Bulky.DataAccess.Data;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,18 +35,21 @@ namespace Bulky.DataAccess.Repository
 				}
 			}
 		}
-		public void UpdatePayMobPaymentID(int id, string sessionId, string paymentIntentId)
+		public void UpdatePayMobPaymentID(int id, int? orderId, int? TransactionId)
 		{
 			var order = _db.OrderHeaders.FirstOrDefault(u => u.Id == id);
-			if (!string.IsNullOrEmpty(sessionId))
-			{
-				order.SessionId = sessionId;
-			}
-			if (!string.IsNullOrEmpty(paymentIntentId))
-			{
-				order.PaymentIntentId = paymentIntentId;
-				order.PaymentDate = DateTime.Now;
-			}
+			if(order != null)
+            {
+                if (orderId != null)
+                {
+                    order.OrderId = orderId;
+                }
+                if (TransactionId != null)
+                {
+                    order.TransactionId = TransactionId;
+                    order.PaymentDate = DateTime.Now;
+                }
+            }
 		}
 
 	}

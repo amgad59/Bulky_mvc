@@ -15,8 +15,4 @@
     <ProjectReference Include="..\Bulky.Utilities\Bulky.Utilities.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="API\DTO\" />
-  </ItemGroup>
-
 </Project>
