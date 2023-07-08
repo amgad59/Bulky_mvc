@@ -6,16 +6,22 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Bulky.Utilities;
+using BulkyApp.Services.IServices;
+using BulkyApp.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);  
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.Configure<PayMobSettings>(builder.Configuration.GetSection("PayMob"));
+/*builder.Services.Configure<PayMobSettings>(builder.Configuration.GetSection("PayMob"));
+*/
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+builder.Services.AddHttpClient<IPayMobService, PayMobService>();
+builder.Services.AddScoped<IPayMobService, PayMobService>();
 
 builder.Services.AddIdentity<IdentityUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.ConfigureApplicationCookie(options =>

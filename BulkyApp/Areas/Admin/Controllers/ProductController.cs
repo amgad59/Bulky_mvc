@@ -83,7 +83,7 @@ namespace BulkyApp.Areas.Admin.Controllers
                 }
                 _unitOfWork.save();
                 int size = productVM.ProductSizeList.Count;
-                productVM.product = _unitOfWork.Product.Get(u => u.Id == productVM.product.Id, includeProperties: "ProductSizes");
+                productVM.product = _unitOfWork.Product.Get(u => u.Id == productVM.product.Id, includeProperties: "ProductSizes",isTracked:true);
                 for (int i = 0; i < size; i++)
                 {
                     if (!productVM.ProductSizeList[i].isSelected)

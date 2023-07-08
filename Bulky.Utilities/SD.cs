@@ -23,5 +23,10 @@ namespace Bulky.Utilities
 		public const string PaymentStatusPending = "Pending";
 		public const string PaymentStatusApproved = "Approved";
 		public const string PaymentStatusRejected = "Rejected";
-	}
+
+        public enum ApiType
+        {
+            GET, POST, PUT, DELETE
+        }
+    }
 }
