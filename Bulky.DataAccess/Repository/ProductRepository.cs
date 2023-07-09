@@ -33,11 +33,11 @@ namespace Bulky.DataAccess.Repository
                 }
             }
         }		
-        public void addSize(Product product,int productSizeId)
+        public async Task addSize(Product product,int productSizeId)
 		{
             if (product != null)
             {
-                var sizeToAdd = _db.ProductSizes.FirstOrDefault(ps => ps.Id == productSizeId);
+                var sizeToAdd = await _db.ProductSizes.FirstOrDefaultAsync(ps => ps.Id == productSizeId);
                 if (sizeToAdd != null && !product.ProductSizes.Contains(sizeToAdd))
                 {
                     product.ProductSizes.Add(sizeToAdd);

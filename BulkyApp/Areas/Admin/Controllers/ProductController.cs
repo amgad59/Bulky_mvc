@@ -21,23 +21,25 @@ namespace BulkyApp.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
             _webHostEnvironment = webHostEnvironment;
         }
-        public IActionResult Upsert(int? id)
+        public async Task<IActionResult> Upsert(int? id)
         {
             ProductVM productVM = new ProductVM();
-            productVM.CategoryList = _unitOfWork.Category.GetAll()
+            IEnumerable<Category> categories = await _unitOfWork.Category.GetAll();
+            productVM.CategoryList = categories
                 .Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
                 });
-            productVM.ProductSizeList = _unitOfWork.ProductSize.GetAll().ToList();
+            IEnumerable<ProductSize> productSizes = await _unitOfWork.ProductSize.GetAll();
+            productVM.ProductSizeList = productSizes.ToList();
             if (id == null || id == 0)
             {
                 productVM.product = new Product();
                 productVM.product.ProductSizes = new List<ProductSize>();
                 return View(productVM);
             }
-            productVM.product = _unitOfWork.Product.Get(u => u.Id == id, includeProperties: "ProductSizes");
+            productVM.product = await _unitOfWork.Product.Get(u => u.Id == id, includeProperties: "ProductSizes");
 
             if (productVM.product == null)
             {
@@ -47,7 +49,7 @@ namespace BulkyApp.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Upsert(ProductVM productVM, IFormFile? file)
+        public async Task<IActionResult> Upsert(ProductVM productVM, IFormFile? file)
         {
 
             if (ModelState.IsValid)
@@ -68,7 +70,7 @@ namespace BulkyApp.Areas.Admin.Controllers
                     }
                     using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
                     {
-                        file.CopyTo(fileStream);
+                        await file.CopyToAsync(fileStream);
                     }
                     productVM.product.ImageUrl = @"\images\product\" + fileName;
                 }
@@ -76,14 +78,14 @@ namespace BulkyApp.Areas.Admin.Controllers
 
 
                 if (productVM.product.Id == 0)
-                    _unitOfWork.Product.Add(productVM.product);
+                    await _unitOfWork.Product.Add(productVM.product);
                 else
                 {
                     _unitOfWork.Product.update(productVM.product);
                 }
-                _unitOfWork.save();
+                await _unitOfWork.save();
                 int size = productVM.ProductSizeList.Count;
-                productVM.product = _unitOfWork.Product.Get(u => u.Id == productVM.product.Id, includeProperties: "ProductSizes",isTracked:true);
+                productVM.product = await _unitOfWork.Product.Get(u => u.Id == productVM.product.Id, includeProperties: "ProductSizes",isTracked:true);
                 for (int i = 0; i < size; i++)
                 {
                     if (!productVM.ProductSizeList[i].isSelected)
@@ -93,40 +95,42 @@ namespace BulkyApp.Areas.Admin.Controllers
                     }
                     else
                     {
-                        _unitOfWork.Product.addSize(productVM.product, productVM.ProductSizeList[i].Id);
+                        await _unitOfWork.Product.addSize(productVM.product, productVM.ProductSizeList[i].Id);
                     }
                 }
-                _unitOfWork.save();
+                await _unitOfWork.save();
                 TempData["success"] = "product created";
                 return RedirectToAction(nameof(Index));
             }
-            productVM.CategoryList = _unitOfWork.Category.GetAll()
+            IEnumerable<Category> categories = await _unitOfWork.Category.GetAll();
+            productVM.CategoryList = categories
                 .Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
                 });
-            productVM.ProductSizeList = _unitOfWork.ProductSize.GetAll().ToList();
+            IEnumerable<ProductSize> productSizes = await _unitOfWork.ProductSize.GetAll();
+            productVM.ProductSizeList = productSizes.ToList();
             return View(productVM);
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            List<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductSizes").ToList();
-            return View(productList);
+            IEnumerable<Product> productList = await _unitOfWork.Product.GetAll(includeProperties: "Category,ProductSizes");
+            return View(productList.ToList());
         }
 
         #region API CALLS
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            List<Product> products = _unitOfWork.Product.GetAll(includeProperties: "Category,ProductSizes").ToList();
-            return Json(new { data = products });
+            IEnumerable<Product> products = await _unitOfWork.Product.GetAll(includeProperties: "Category,ProductSizes");
+            return Json(new { data = products.ToList() });
         }
         [HttpDelete]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            Product product = _unitOfWork.Product.Get(u => u.Id == id);
+            Product product = await _unitOfWork.Product.Get(u => u.Id == id);
             if (product == null) { return Json(new { success = false, message = "error deleting" }); }
             var oldImagePath = Path.Combine(_webHostEnvironment.ContentRootPath, product.ImageUrl.TrimStart('\\'));
             if (System.IO.File.Exists(oldImagePath))
@@ -134,7 +138,7 @@ namespace BulkyApp.Areas.Admin.Controllers
                 System.IO.File.Delete(oldImagePath);
             }
             _unitOfWork.Product.Delete(product);
-            _unitOfWork.save();
+            await _unitOfWork.save();
             return Json(new { success = true, message = "Delete success" });
         }
         #endregion

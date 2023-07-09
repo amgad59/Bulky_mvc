@@ -1,6 +1,7 @@
 ﻿using Bulky.DataAccess.Data;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -23,9 +24,9 @@ namespace Bulky.DataAccess.Repository
 			_db.OrderHeaders.Update(OrderHeader);
 		}
 
-		public void UpdateStatus(int id, string orderStatus, string? paymentStatus = null)
+		public async Task UpdateStatus(int id, string orderStatus, string? paymentStatus = null)
 		{
-			var order = _db.OrderHeaders.FirstOrDefault(u => u.Id == id);
+			var order = await _db.OrderHeaders.FirstOrDefaultAsync(u => u.Id == id);
 			if (order != null)
 			{
 				order.OrderStatus = orderStatus;
@@ -35,9 +36,9 @@ namespace Bulky.DataAccess.Repository
 				}
 			}
 		}
-		public void UpdatePayMobPaymentID(int id, int? orderId, int? TransactionId)
+		public async Task UpdatePayMobPaymentID(int id, int? orderId, int? TransactionId)
 		{
-			var order = _db.OrderHeaders.FirstOrDefault(u => u.Id == id);
+			var order = await _db.OrderHeaders.FirstOrDefaultAsync(u => u.Id == id);
 			if(order != null)
             {
                 if (orderId != null)

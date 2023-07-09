@@ -34,9 +34,9 @@ namespace Bulky.DataAccess.Repository
             OrderDetail = new OrderDetailRepository(_db);
         }
 
-		public void save()
+		public async Task save()
 		{
-			_db.SaveChanges();
+			await _db.SaveChangesAsync();
 		}
 	}
 }

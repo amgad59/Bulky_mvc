@@ -20,9 +20,9 @@ namespace Bulky.DataAccess.Repository
 			_db = db;
 			dbSet = db.Set<T>();
         }
-        public void Add(T entity)
+        public async Task Add(T entity)
 		{
-			dbSet.Add(entity);
+			await dbSet.AddAsync(entity);
 		}
 
 		public void Delete(T entity)
@@ -35,7 +35,7 @@ namespace Bulky.DataAccess.Repository
 			dbSet.RemoveRange(entities);
 		}
 
-		public T Get(Expression<Func<T, bool>> expression, string? includeProperties = null, bool isTracked = false)
+		public async Task<T> Get(Expression<Func<T, bool>> expression, string? includeProperties = null, bool isTracked = false)
 		{
 			IQueryable<T> query;
             if (isTracked)
@@ -55,10 +55,10 @@ namespace Bulky.DataAccess.Repository
                     query = query.Include(property);
                 }
             }
-            return query.FirstOrDefault();
+            return await query.FirstOrDefaultAsync();
         }
 
-		public IEnumerable<T> GetAll(Expression<Func<T, bool>>? expression = null, string? includeProperties = null)
+		public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>>? expression = null, string? includeProperties = null)
 		{
 			IQueryable<T> query = dbSet;
 			if(expression != null)
@@ -73,7 +73,7 @@ namespace Bulky.DataAccess.Repository
 					query = query.Include(property);
 				}
 			}
-			return query.ToList();
+			return await query.ToListAsync();
 		}
 	}
 }

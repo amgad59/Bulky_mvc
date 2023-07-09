@@ -23,14 +23,14 @@ namespace BulkyApp.Areas.Customer.Controllers
             _unitOfWork = unitOfWork;
             _payMobService = payMobService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             ShoppingCartVM shoppingCartVM = new()
             {
-                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,
+                ShoppingCartList = await _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,
                 includeProperties: "Product"),
                 orderHeader = new()
             };
@@ -41,19 +41,19 @@ namespace BulkyApp.Areas.Customer.Controllers
             }
             return View(shoppingCartVM);
         }
-        public IActionResult Summary()
+        public async Task<IActionResult> Summary()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             ShoppingCartVM shoppingCartVM = new()
             {
-                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,
+                ShoppingCartList = await _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,
                 includeProperties: "Product"),
                 orderHeader = new()
             };
 
-            shoppingCartVM.orderHeader.ApplicationUser = _unitOfWork.ApplicationUser.Get(u=>u.Id == userId);
+            shoppingCartVM.orderHeader.ApplicationUser = await _unitOfWork.ApplicationUser.Get(u=>u.Id == userId);
 
             foreach (var cart in shoppingCartVM.ShoppingCartList)
             {
@@ -71,23 +71,23 @@ namespace BulkyApp.Areas.Customer.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u => u.ApplicationUserId == userId && u.PaymentStatus == SD.PaymentStatusPending);
+            OrderHeader orderHeader = await _unitOfWork.OrderHeader.Get(u => u.ApplicationUserId == userId && u.PaymentStatus == SD.PaymentStatusPending);
 
             if (orderHeader != null)
             {
                 shoppingCartVM.orderHeader.Id = orderHeader.Id;
-                IEnumerable<OrderDetail> orderDetails = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderHeader.Id);
+                IEnumerable<OrderDetail> orderDetails = await _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderHeader.Id);
                 _unitOfWork.OrderDetail.DeleteAll(orderDetails);
-                _unitOfWork.save();
+                await _unitOfWork.save();
             }
 
-                shoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId
+                shoppingCartVM.ShoppingCartList = await _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId
             ,includeProperties: "Product");
 
             shoppingCartVM.orderHeader.OrderDate = DateTime.Now;
             shoppingCartVM.orderHeader.ApplicationUserId = userId;
 
-            ApplicationUser applicationUser = _unitOfWork.ApplicationUser.Get(u=>u.Id == userId);
+            ApplicationUser applicationUser = await _unitOfWork.ApplicationUser.Get(u=>u.Id == userId);
 
             foreach (var cart in shoppingCartVM.ShoppingCartList)
             {
@@ -101,8 +101,8 @@ namespace BulkyApp.Areas.Customer.Controllers
                 _unitOfWork.OrderHeader.update(shoppingCartVM.orderHeader);
             }
             else
-                _unitOfWork.OrderHeader.Add(shoppingCartVM.orderHeader);
-            _unitOfWork.save();
+                await _unitOfWork.OrderHeader.Add(shoppingCartVM.orderHeader);
+            await _unitOfWork.save();
 
             List<Item> items = new List<Item>();
             foreach(var cart in shoppingCartVM.ShoppingCartList)
@@ -115,8 +115,8 @@ namespace BulkyApp.Areas.Customer.Controllers
                     Count = cart.count
                 };
                 items.Add(new Item {amount_cents = cart.price*100,description = cart.Product.Description,name=cart.Product.Description,quantity=cart.count });
-                _unitOfWork.OrderDetail.Add(orderDetail);
-                _unitOfWork.save();
+                await _unitOfWork.OrderDetail.Add(orderDetail);
+                await _unitOfWork.save();
             }
 
 
@@ -163,7 +163,7 @@ namespace BulkyApp.Areas.Customer.Controllers
 
 
 
-        public IActionResult OrderChecking()
+        public async Task<IActionResult> OrderChecking()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -172,13 +172,16 @@ namespace BulkyApp.Areas.Customer.Controllers
             var id = int.Parse(query["id"]);
             int order_Id = int.Parse(query["order"]);
             bool success = Convert.ToBoolean(query["success"]);
-            var OrderHeader = _unitOfWork.OrderHeader.Get(u=>u.ApplicationUserId == userId && u.PaymentStatus == SD.PaymentStatusPending);
-
+            var OrderHeader = await _unitOfWork.OrderHeader.Get(u => u.ApplicationUserId == userId && u.PaymentStatus == SD.PaymentStatusPending);
+            IEnumerable<OrderDetail> orderDetails = await _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == OrderHeader.Id);
+            IEnumerable<ShoppingCart> shoppingCarts = await _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId);
             if (success)
             {
-                _unitOfWork.OrderHeader.UpdatePayMobPaymentID(OrderHeader.Id, order_Id, id);
-                _unitOfWork.OrderHeader.UpdateStatus(OrderHeader.Id, SD.StatusApproved, SD.PaymentStatusApproved);
-                _unitOfWork.save();
+                _unitOfWork.OrderDetail.DeleteAll(orderDetails);
+                _unitOfWork.ShoppingCart.DeleteAll(shoppingCarts);
+                await _unitOfWork.OrderHeader.UpdatePayMobPaymentID(OrderHeader.Id, order_Id, id);
+                await _unitOfWork.OrderHeader.UpdateStatus(OrderHeader.Id, SD.StatusApproved, SD.PaymentStatusApproved);
+                await _unitOfWork.save();
                 return RedirectToAction(nameof(OrderConfirmation), new { order_id = order_Id });
             }
             return NotFound();
@@ -187,17 +190,17 @@ namespace BulkyApp.Areas.Customer.Controllers
         {
             return View(order_id);
         }
-        public IActionResult plus(int cartId)
+        public async Task<IActionResult> plus(int cartId)
         {
-            ShoppingCart shoppingCart = _unitOfWork.ShoppingCart.Get(u=>u.Id == cartId);
+            ShoppingCart shoppingCart = await _unitOfWork.ShoppingCart.Get(u=>u.Id == cartId);
             shoppingCart.count += 1;
             _unitOfWork.ShoppingCart.update(shoppingCart);
-            _unitOfWork.save();
+            await _unitOfWork.save();
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult minus(int cartId)
+        public async Task<IActionResult> minus(int cartId)
         {
-            ShoppingCart shoppingCart = _unitOfWork.ShoppingCart.Get(u=>u.Id == cartId);
+            ShoppingCart shoppingCart = await _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
             if (shoppingCart.count <= 1)
             {
                 _unitOfWork.ShoppingCart.Delete(shoppingCart);
@@ -207,14 +210,14 @@ namespace BulkyApp.Areas.Customer.Controllers
                 shoppingCart.count -= 1;
                 _unitOfWork.ShoppingCart.update(shoppingCart);
             }
-            _unitOfWork.save();
+            await _unitOfWork.save();
             return RedirectToAction(nameof(Index));
         }
-        public IActionResult remove(int cartId)
+        public async Task<IActionResult> remove(int cartId)
         {
-            ShoppingCart shoppingCart = _unitOfWork.ShoppingCart.Get(u=>u.Id == cartId);
+            ShoppingCart shoppingCart = await _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
             _unitOfWork.ShoppingCart.Delete(shoppingCart);
-            _unitOfWork.save();
+            await _unitOfWork.save();
             return RedirectToAction(nameof(Index));
         }
 

@@ -18,17 +18,17 @@ namespace BulkyApp.Areas.Admin.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            List<Category> categories = _unitOfWork.Category.GetAll().ToList();
-            return View(categories);
+            IEnumerable<Category> categories = await _unitOfWork.Category.GetAll();
+            return View(categories.ToList());
         }
         public IActionResult Create()
         {
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Category c)
+        public async Task<IActionResult> Create(Category c)
         {
             /* if(c.Name == "hey")
              {
@@ -36,21 +36,21 @@ namespace BulkyApp.Areas.Admin.Controllers
              }*/
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Add(c);
-                _unitOfWork.save();
+                await _unitOfWork.Category.Add(c);
+                await _unitOfWork.save();
                 TempData["success"] = "category created";
                 return RedirectToAction(nameof(Index));
 
             }
             return View();
         }
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || id == 0)
             {
                 return NotFound();
             }
-            Category? category = _unitOfWork.Category.Get(c => c.Id == id);
+            Category? category = await _unitOfWork.Category.Get(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
@@ -58,24 +58,24 @@ namespace BulkyApp.Areas.Admin.Controllers
             return View(category);
         }
         [HttpPost]
-        public IActionResult Edit(Category c)
+        public async Task<IActionResult> Edit(Category c)
         {
             if (ModelState.IsValid)
             {
                 _unitOfWork.Category.update(c);
-                _unitOfWork.save();
+                await _unitOfWork.save();
                 TempData["success"] = "category updated";
                 return RedirectToAction(nameof(Index));
             }
             return View();
         }
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || id == 0)
             {
                 return NotFound();
             }
-            Category? category = _unitOfWork.Category.Get(c => c.Id == id);
+            Category? category = await _unitOfWork.Category.Get(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
@@ -83,16 +83,16 @@ namespace BulkyApp.Areas.Admin.Controllers
             return View(category);
         }
         [HttpPost, ActionName(nameof(Delete))]
-        public IActionResult DeletePOST(int? id)
+        public async Task<IActionResult> DeletePOST(int? id)
         {
-            Category? category = _unitOfWork.Category.Get(c => c.Id == id);
+            Category? category = await _unitOfWork.Category.Get(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
             }
 
             _unitOfWork.Category.Delete(category);
-            _unitOfWork.save();
+            await _unitOfWork.save();
             TempData["success"] = "category deleted";
             return RedirectToAction(nameof(Index));
         }

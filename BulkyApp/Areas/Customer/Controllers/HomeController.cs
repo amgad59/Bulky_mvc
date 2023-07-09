@@ -26,15 +26,15 @@ namespace BulkyApp.Areas.Customer.Controllers
 
         public async Task<IActionResult> Index()
 		{
-            List<Product> products = _unitOfWork.Product.GetAll(includeProperties: "ProductSizes").ToList();
+            IEnumerable<Product> products = await _unitOfWork.Product.GetAll(includeProperties: "ProductSizes");
 
-            return View(products);
+            return View(products.ToList());
         }
-        public IActionResult Details(int productId)
+        public async Task<IActionResult> Details(int productId)
 		{
             ShoppingCart shoppingCart = new()
             {
-                Product = _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category"),
+                Product = await _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category"),
                 count = 1,
                 ProductId = productId
             }; 
@@ -42,13 +42,13 @@ namespace BulkyApp.Areas.Customer.Controllers
         }
         [HttpPost]
         [Authorize]
-        public IActionResult Details(ShoppingCart shoppingCart)
+        public async Task<IActionResult> Details(ShoppingCart shoppingCart)
 		{
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             shoppingCart.ApplicationUserId = UserId;
 
-            ShoppingCart cardFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == UserId &&
+            ShoppingCart cardFromDb = await _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == UserId &&
             u.ProductId == shoppingCart.ProductId);
 
             if (cardFromDb != null)
@@ -58,10 +58,10 @@ namespace BulkyApp.Areas.Customer.Controllers
             }
             else
             {
-                _unitOfWork.ShoppingCart.Add(shoppingCart);
+                await _unitOfWork.ShoppingCart.Add(shoppingCart);
             }
 
-            _unitOfWork.save();
+            await _unitOfWork.save();
             TempData["success"] = "Added to Cart";
 			return RedirectToAction(nameof(Index));
         }
