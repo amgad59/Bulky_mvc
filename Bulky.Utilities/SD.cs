@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bulky.Utilities
+namespace Empire.Utilities
 {
 	public static class SD
 	{

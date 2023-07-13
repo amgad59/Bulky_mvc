@@ -4,9 +4,9 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
-using static Bulky.Utilities.SD;
+using static Empire.Utilities.SD;
 
-namespace Bulky.Models.API
+namespace Empire.Models.API
 {
     public class APIRequest
     {

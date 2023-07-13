@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bulky.Models.API
+namespace Empire.Models.API
 {
     public class Item
     {

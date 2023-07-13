@@ -1,5 +1,5 @@
-﻿using Bulky.DataAccess.Data;
-using Bulky.DataAccess.Repository.IRepository;
+﻿using Empire.DataAccess.Data;
+using Empire.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace Bulky.DataAccess.Repository
+namespace Empire.DataAccess.Repository
 {
 	public class Repository<T> : IRepository<T> where T : class
 	{

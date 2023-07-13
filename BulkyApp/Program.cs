@@ -1,13 +1,13 @@
-using Bulky.DataAccess.Data;
-using Bulky.DataAccess.Repository;
-using Bulky.DataAccess.Repository.IRepository;
+using Empire.DataAccess.Data;
+using Empire.DataAccess.Repository;
+using Empire.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Bulky.Utilities;
-using BulkyApp.Services.IServices;
-using BulkyApp.Services;
+using Empire.Utilities;
+using EmpireApp.Services.IServices;
+using EmpireApp.Services;
 using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);  

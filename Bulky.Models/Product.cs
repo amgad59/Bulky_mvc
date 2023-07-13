@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.Drawing;
-using Bulky.Utilities;
+using Empire.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bulky.Models
+namespace Empire.Models
 {
 	public class Product
 	{

@@ -1,10 +1,10 @@
-﻿using Bulky.Models;
-using Bulky.Utilities;
+﻿using Empire.Models;
+using Empire.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bulky.DataAccess.Data
+namespace Empire.DataAccess.Data
 {
     public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {

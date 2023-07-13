@@ -1,12 +1,12 @@
-﻿using Bulky.Models.API;
-using Bulky.Models.API.DTO;
-using Bulky.Utilities;
-using BulkyApp.Services.IServices;
+﻿using Empire.Models.API;
+using Empire.Models.API.DTO;
+using Empire.Utilities;
+using EmpireApp.Services.IServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using static Bulky.Utilities.SD;
+using static Empire.Utilities.SD;
 
-namespace BulkyApp.Services
+namespace EmpireApp.Services
 {
     public class PayMobService : BaseService,IPayMobService
     {

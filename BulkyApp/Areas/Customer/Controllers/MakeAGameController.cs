@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace BulkyApp.Areas.Customer.Controllers
+namespace EmpireApp.Areas.Customer.Controllers
 {
     [Area("Customer")]
     public class MakeAGameController : Controller

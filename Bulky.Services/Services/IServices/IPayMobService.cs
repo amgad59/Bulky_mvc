@@ -1,4 +1,4 @@
-﻿namespace BulkyApp.Services.IServices
+﻿namespace EmpireApp.Services.IServices
 {
     public interface IPayMobService
     {

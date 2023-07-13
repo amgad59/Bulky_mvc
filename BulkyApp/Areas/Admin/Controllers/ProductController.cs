@@ -1,14 +1,14 @@
-﻿using Bulky.DataAccess.Repository;
-using Bulky.DataAccess.Repository.IRepository;
-using Bulky.Models;
-using Bulky.Models.ViewModels;
-using Bulky.Utilities;
+﻿using Empire.DataAccess.Repository;
+using Empire.DataAccess.Repository.IRepository;
+using Empire.Models;
+using Empire.Models.ViewModels;
+using Empire.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Data;
 
-namespace BulkyApp.Areas.Admin.Controllers
+namespace EmpireApp.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = SD.Role_Admin)]

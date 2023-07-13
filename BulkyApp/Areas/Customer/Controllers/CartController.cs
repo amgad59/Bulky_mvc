@@ -1,15 +1,15 @@
-﻿using Bulky.DataAccess.Repository.IRepository;
-using Bulky.Models;
-using Bulky.Models.API;
-using Bulky.Models.ViewModels;
-using Bulky.Utilities;
-using BulkyApp.Services;
-using BulkyApp.Services.IServices;
+﻿using Empire.DataAccess.Repository.IRepository;
+using Empire.Models;
+using Empire.Models.API;
+using Empire.Models.ViewModels;
+using Empire.Utilities;
+using EmpireApp.Services;
+using EmpireApp.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace BulkyApp.Areas.Customer.Controllers
+namespace EmpireApp.Areas.Customer.Controllers
 {
     [Area("Customer")]
     public class CartController : Controller

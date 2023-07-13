@@ -1,6 +1,6 @@
-﻿using Bulky.DataAccess.Data;
-using Bulky.DataAccess.Repository.IRepository;
-using Bulky.Models;
+﻿using Empire.DataAccess.Data;
+using Empire.DataAccess.Repository.IRepository;
+using Empire.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bulky.DataAccess.Repository
+namespace Empire.DataAccess.Repository
 {
 	public class UnitOfWork : IUnitOfWork
 	{

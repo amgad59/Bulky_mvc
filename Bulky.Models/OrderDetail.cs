@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bulky.Models
+namespace Empire.Models
 {
     public class OrderDetail
     {

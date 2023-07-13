@@ -1,11 +1,11 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
-using Bulky.Models.API;
-using BulkyApp.Services.IServices;
+using Empire.Models.API;
+using EmpireApp.Services.IServices;
 using Newtonsoft.Json;
-using static Bulky.Utilities.SD;
+using static Empire.Utilities.SD;
 
-namespace BulkyApp.Services
+namespace EmpireApp.Services
 {
     public class BaseService : IBaseService
     {
@@ -21,7 +21,7 @@ namespace BulkyApp.Services
         {
             try
             {
-                var client = httpClient.CreateClient("MagicAPI");
+                var client = httpClient.CreateClient("APIClient");
                 HttpRequestMessage message = new HttpRequestMessage();
                 message.Headers.Add("Accept", "application/json");
                 message.RequestUri = new Uri(apiRequest.Url);

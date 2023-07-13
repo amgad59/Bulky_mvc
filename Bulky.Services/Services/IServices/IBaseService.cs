@@ -1,6 +1,6 @@
-﻿using Bulky.Models.API;
+﻿using Empire.Models.API;
 
-namespace BulkyApp.Services.IServices
+namespace EmpireApp.Services.IServices
 {
     public interface IBaseService
     {

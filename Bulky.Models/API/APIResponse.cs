@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bulky.Models.API
+namespace Empire.Models.API
 {
     public class APIResponse
     {

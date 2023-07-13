@@ -1,6 +1,6 @@
-﻿using Bulky.DataAccess.Data;
-using Bulky.DataAccess.Repository.IRepository;
-using Bulky.Models;
+﻿using Empire.DataAccess.Data;
+using Empire.DataAccess.Repository.IRepository;
+using Empire.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bulky.DataAccess.Repository
+namespace Empire.DataAccess.Repository
 {
 	public class OrderHeaderRepository : Repository<OrderHeader>, IOrderHeaderRepository
     {

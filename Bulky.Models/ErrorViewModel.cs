@@ -1,4 +1,4 @@
-namespace Bulky.Models
+namespace Empire.Models
 {
     public class ErrorViewModel
     {

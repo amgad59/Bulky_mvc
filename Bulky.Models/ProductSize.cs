@@ -1,4 +1,4 @@
-﻿using Bulky.Utilities;
+﻿using Empire.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Bulky.Models
+namespace Empire.Models
 {
     public class ProductSize
     {

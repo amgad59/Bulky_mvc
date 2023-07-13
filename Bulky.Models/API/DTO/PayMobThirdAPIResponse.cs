@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bulky.Models.API.DTO
+namespace Empire.Models.API.DTO
 {
     public class PayMobFirstAPIResponse
     {

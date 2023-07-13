@@ -1,17 +1,17 @@
-using Bulky.DataAccess.Repository.IRepository;
-using Bulky.Models;
-using Bulky.Models.API;
-using Bulky.Utilities;
-using BulkyApp.Services.IServices;
+using Empire.DataAccess.Repository.IRepository;
+using Empire.Models;
+using Empire.Models.API;
+using Empire.Utilities;
+using EmpireApp.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NuGet.Common;
 using System.Diagnostics;
 using System.Security.Claims;
-using static BulkyApp.Services.PayMobService;
+using static EmpireApp.Services.PayMobService;
 
-namespace BulkyApp.Areas.Customer.Controllers
+namespace EmpireApp.Areas.Customer.Controllers
 {
 	[Area("Customer")]
 	public class HomeController : Controller
