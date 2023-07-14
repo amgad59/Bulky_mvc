@@ -24,7 +24,10 @@ namespace Empire.Utilities
 		public const string PaymentStatusApproved = "Approved";
 		public const string PaymentStatusRejected = "Rejected";
 
-        public enum ApiType
+		public const string SessionCart = "SessionShoppingCart";
+
+
+		public enum ApiType
         {
             GET, POST, PUT, DELETE
         }

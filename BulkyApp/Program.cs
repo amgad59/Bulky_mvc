@@ -25,6 +25,26 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddHttpClient<IPayMobService, PayMobService>();
 builder.Services.AddScoped<IPayMobService, PayMobService>();
 
+builder.Services.AddAuthentication()
+    .AddGoogle(option =>
+{
+    option.ClientId = "1097535170814-k2nb9kplse0icvl97v05poqc0am96h55.apps.googleusercontent.com";
+    option.ClientSecret = "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";
+})
+    .AddFacebook(options =>
+{
+    options.AppId = "930739641364678";
+    options.AppSecret = "76a03b4648733a57bacbbed1d3fa4de2";
+});
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(100);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddIdentity<IdentityUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -54,6 +74,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",

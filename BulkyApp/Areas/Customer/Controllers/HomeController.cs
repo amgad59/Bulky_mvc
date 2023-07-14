@@ -4,6 +4,7 @@ using Empire.Models.API;
 using Empire.Utilities;
 using EmpireApp.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NuGet.Common;
@@ -26,6 +27,7 @@ namespace EmpireApp.Areas.Customer.Controllers
 
         public async Task<IActionResult> Index()
 		{
+
             IEnumerable<Product> products = await _unitOfWork.Product.GetAll(includeProperties: "ProductSizes");
 
             return View(products.ToList());
@@ -54,14 +56,17 @@ namespace EmpireApp.Areas.Customer.Controllers
             if (cardFromDb != null)
             {
                 cardFromDb.count += shoppingCart.count;
-                _unitOfWork.ShoppingCart.update(cardFromDb);    
+                _unitOfWork.ShoppingCart.update(cardFromDb);
+                await _unitOfWork.save();
             }
             else
             {
                 await _unitOfWork.ShoppingCart.Add(shoppingCart);
+                await _unitOfWork.save();
+                HttpContext.Session.SetInt32(SD.SessionCart,
+                    _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == UserId).GetAwaiter().GetResult().Count());
             }
 
-            await _unitOfWork.save();
             TempData["success"] = "Added to Cart";
 			return RedirectToAction(nameof(Index));
         }

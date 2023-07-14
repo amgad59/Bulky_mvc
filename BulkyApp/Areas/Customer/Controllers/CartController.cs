@@ -186,12 +186,14 @@ namespace EmpireApp.Areas.Customer.Controllers
         }        
         public IActionResult OrderConfirmation(int order_id)
         {
+            HttpContext.Session.Clear();
             return View(order_id);
         }
         public async Task<IActionResult> plus(int cartId)
         {
             ShoppingCart shoppingCart = await _unitOfWork.ShoppingCart.Get(u=>u.Id == cartId);
             shoppingCart.count += 1;
+
             _unitOfWork.ShoppingCart.update(shoppingCart);
             await _unitOfWork.save();
             return RedirectToAction(nameof(Index));
@@ -201,7 +203,10 @@ namespace EmpireApp.Areas.Customer.Controllers
             ShoppingCart shoppingCart = await _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
             if (shoppingCart.count <= 1)
             {
-                _unitOfWork.ShoppingCart.Delete(shoppingCart);
+                _unitOfWork.ShoppingCart.Delete(shoppingCart); 
+                HttpContext.Session.SetInt32(SD.SessionCart,
+                    _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == shoppingCart.ApplicationUserId)
+                    .GetAwaiter().GetResult().Count() - 1);
             }
             else
             {
@@ -215,6 +220,9 @@ namespace EmpireApp.Areas.Customer.Controllers
         {
             ShoppingCart shoppingCart = await _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
             _unitOfWork.ShoppingCart.Delete(shoppingCart);
+            HttpContext.Session.SetInt32(SD.SessionCart,
+                   _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == shoppingCart.ApplicationUserId)
+                   .GetAwaiter().GetResult().Count() -1);
             await _unitOfWork.save();
             return RedirectToAction(nameof(Index));
         }
