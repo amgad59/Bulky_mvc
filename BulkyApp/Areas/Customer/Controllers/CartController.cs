@@ -154,8 +154,8 @@ namespace EmpireApp.Areas.Customer.Controllers
                     { "integration_id", 3951279},
                     { "lock_order_when_paid", "true"}
                 };
-            string t = await _payMobService.PayMobSetup(FirstPayload, SecondPayload);
-            Response.Headers.Add("Location", $"https://accept.paymob.com/api/acceptance/iframes/769121?payment_token={t}");
+            string token = await _payMobService.PayMobSetup(FirstPayload, SecondPayload);
+            Response.Headers.Add("Location", $"https://accept.paymob.com/api/acceptance/iframes/769121?payment_token={token}");
 
             return new StatusCodeResult(303);
             //return View(shoppingCartVM);
@@ -173,11 +173,9 @@ namespace EmpireApp.Areas.Customer.Controllers
             int order_Id = int.Parse(query["order"]);
             bool success = Convert.ToBoolean(query["success"]);
             var OrderHeader = await _unitOfWork.OrderHeader.Get(u => u.ApplicationUserId == userId && u.PaymentStatus == SD.PaymentStatusPending);
-            IEnumerable<OrderDetail> orderDetails = await _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == OrderHeader.Id);
             IEnumerable<ShoppingCart> shoppingCarts = await _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId);
             if (success)
             {
-                _unitOfWork.OrderDetail.DeleteAll(orderDetails);
                 _unitOfWork.ShoppingCart.DeleteAll(shoppingCarts);
                 await _unitOfWork.OrderHeader.UpdatePayMobPaymentID(OrderHeader.Id, order_Id, id);
                 await _unitOfWork.OrderHeader.UpdateStatus(OrderHeader.Id, SD.StatusApproved, SD.PaymentStatusApproved);

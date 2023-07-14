@@ -1,4 +1,30 @@
-﻿<div class="container">
+﻿@{
+	var status = Context.Request.Query["status"];
+	var inprocess = "text-primary";
+	var completed = "text-primary";
+	var approved = "text-primary";
+	var all = "text-primary";
+
+	switch (status)
+	{
+		case "inprocess":
+			inprocess = "active text-white bg-primary";
+			break;
+		case "completed":
+			completed = "active text-white bg-primary";
+			break;
+		case "approved":
+			approved = "active text-white bg-primary";
+			break;
+		default:
+			all = "active text-white bg-primary";
+			break;
+	}
+
+}
+
+
+<div class="container">
 	<div class="row pt-4">
 		<div class="col-6">
 			<h2 class="text-primary">
@@ -6,20 +32,40 @@
 			</h2>
 		</div>
 	</div>
-	<table id="tblData" class="table table-striped-columns">
-		<thead>
-			<tr>
-				<th scope="col">ID</th>
-				<th scope="col">Name</th>
-				<th scope="col">Phone Number</th>
-				<th scope="col">Email</th>
-				<th scope="col">Status</th>
-				<th scope="col">Total</th>
-				<th scope="col"></th>
-			</tr>
-		</thead>
-	</table>
+	<div class="card-body p-4">
+		<div class="d-flex justify-content-between pb-5 pt-2">
+			<span></span>
+			<ul class="list-group list-group-horizontal-sm">
+				<a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="inprocess">
+				<li class="list-group-item @inprocess">In Process</li>
+				</a>
+				<a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="completed">
+				<li class="list-group-item @completed">Completed</li>
+				</a>
+				<a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="approved">
+				<li class="list-group-item @approved">Approved</li>
+				</a>
+				<a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="all">
+				<li class="list-group-item @all">All</li>
+				</a>
+			</ul>
+		</div>
+		<table id="tblData" class="table table-striped-columns">
+			<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Name</th>
+					<th scope="col">Phone Number</th>
+					<th scope="col">Email</th>
+					<th scope="col">Status</th>
+					<th scope="col">Total</th>
+					<th scope="col"></th>
+				</tr>
+			</thead>
+		</table>
+	</div>
 </div>
+
 @section Scripts{
 	<script src="~/js/order.js"></script>
 }
