@@ -8,6 +8,6 @@ namespace Empire.DataAccess.DbInitializer
 {
     public interface IDbInitializer
     {
-        Task Initialize();
+        void Initialize();
     }
 }

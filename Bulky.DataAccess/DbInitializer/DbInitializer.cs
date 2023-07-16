@@ -23,13 +23,13 @@ namespace Empire.DataAccess.DbInitializer
             _userManager = userManager;
             _roleManager = roleManager;
         }
-        public async Task Initialize()
+        public void Initialize()
         {
             try
             {
-                if(_db.Database.GetPendingMigrationsAsync().GetAwaiter().GetResult().Count() > 0)
+                if(_db.Database.GetPendingMigrations().Count() > 0)
                 {
-                    await _db.Database.MigrateAsync();
+                    _db.Database.Migrate();
                 }
             }
             catch (Exception ex)
@@ -53,10 +53,10 @@ namespace Empire.DataAccess.DbInitializer
                     PhoneNumber = "1112223333",
                     StreetAddress = "test 123 Ave",
                     City = "Chicago"
-                }, "admin").GetAwaiter().GetResult();
+                }, "Admin123*").GetAwaiter().GetResult();
 
-                ApplicationUser user = await _db.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName == "admin@gmail.com");
-                await _userManager.AddToRoleAsync(user, SD.Role_Admin);
+                ApplicationUser user = _db.ApplicationUsers.FirstOrDefault(u => u.Email == "admin@gmail.com");
+                _userManager.AddToRoleAsync(user, SD.Role_Admin).GetAwaiter().GetResult();
 
             }
             return;
