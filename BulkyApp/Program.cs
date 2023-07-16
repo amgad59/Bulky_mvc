@@ -9,6 +9,7 @@ using Empire.Utilities;
 using EmpireApp.Services.IServices;
 using EmpireApp.Services;
 using System.Configuration;
+using Empire.DataAccess.DbInitializer;
 
 var builder = WebApplication.CreateBuilder(args);  
 
@@ -25,6 +26,9 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddHttpClient<IPayMobService, PayMobService>();
 builder.Services.AddScoped<IPayMobService, PayMobService>();
 
+
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+
 builder.Services.AddAuthentication()
     .AddGoogle(option =>
 {
@@ -36,6 +40,8 @@ builder.Services.AddAuthentication()
     options.AppId = "930739641364678";
     options.AppSecret = "76a03b4648733a57bacbbed1d3fa4de2";
 });
+
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -75,8 +81,19 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
+seedDatabase();
 app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 app.Run();
+
+
+void seedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var DbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        DbInitializer.Initialize();
+    }
+}

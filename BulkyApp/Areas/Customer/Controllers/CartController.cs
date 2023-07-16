@@ -31,7 +31,7 @@ namespace EmpireApp.Areas.Customer.Controllers
             ShoppingCartVM shoppingCartVM = new()
             {
                 ShoppingCartList = await _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,
-                includeProperties: "Product"),
+                includeProperties: "Product,productSize"),
                 orderHeader = new()
             };
             foreach(var cart in shoppingCartVM.ShoppingCartList)
@@ -49,7 +49,7 @@ namespace EmpireApp.Areas.Customer.Controllers
             ShoppingCartVM shoppingCartVM = new()
             {
                 ShoppingCartList = await _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,
-                includeProperties: "Product"),
+                includeProperties: "Product,productSize"),
                 orderHeader = new()
             };
 
@@ -112,7 +112,8 @@ namespace EmpireApp.Areas.Customer.Controllers
                     ProductId = cart.ProductId,
                     OrderHeaderId = shoppingCartVM.orderHeader.Id,
                     Price = cart.price,
-                    Count = cart.count
+                    Count = cart.count,
+                    productSizeId = cart.productSizeId
                 };
                 items.Add(new Item {amount_cents = cart.price*100,description = cart.Product.Description,name=cart.Product.Description,quantity=cart.count });
                 await _unitOfWork.OrderDetail.Add(orderDetail);

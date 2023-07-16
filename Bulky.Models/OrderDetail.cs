@@ -23,6 +23,10 @@ namespace Empire.Models
         [ValidateNever]
         [ForeignKey(nameof(ProductId))]
         public Product Product { get; set; }
+        public int productSizeId { get; set; }
+        [ForeignKey(nameof(productSizeId))]
+        [ValidateNever]
+        public ProductSize productSize { get; set; }
         public int Count { get; set; }
         public int Price { get; set; }
     }

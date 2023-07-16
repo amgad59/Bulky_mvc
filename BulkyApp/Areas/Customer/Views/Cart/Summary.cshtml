@@ -75,6 +75,8 @@
 									<div>
 										<h6 class="my-0">@cart.Product.Description</h6>
 										<small class="text-muted">Quantity: @cart.count</small>
+										<br/>
+										<small class="text-muted">Product Size: @cart.productSize.Name</small>
 									</div>
 										<span class="text-muted">@((cart.count * (cart.Product.ListPrice - cart.Product.ListPrice * cart.Product.Discount / 100)).ToString("c")) </span>
 								</li>

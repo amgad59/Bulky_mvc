@@ -83,11 +83,16 @@ namespace Empire.DataAccess.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<int>("productSizeId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderHeaderId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("productSizeId");
 
                     b.ToTable("OrderDetails");
                 });
@@ -277,11 +282,16 @@ namespace Empire.DataAccess.Migrations
                     b.Property<int>("count")
                         .HasColumnType("int");
 
+                    b.Property<int>("productSizeId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("productSizeId");
 
                     b.ToTable("ShoppingCarts");
                 });
@@ -542,9 +552,17 @@ namespace Empire.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Empire.Models.ProductSize", "productSize")
+                        .WithMany()
+                        .HasForeignKey("productSizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("OrderHeader");
 
                     b.Navigation("Product");
+
+                    b.Navigation("productSize");
                 });
 
             modelBuilder.Entity("Empire.Models.OrderHeader", b =>
@@ -583,9 +601,17 @@ namespace Empire.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Empire.Models.ProductSize", "productSize")
+                        .WithMany()
+                        .HasForeignKey("productSizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Product");
+
+                    b.Navigation("productSize");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

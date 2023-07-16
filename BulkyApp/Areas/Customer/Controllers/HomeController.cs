@@ -6,6 +6,7 @@ using EmpireApp.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using NuGet.Common;
 using System.Diagnostics;
@@ -36,10 +37,15 @@ namespace EmpireApp.Areas.Customer.Controllers
 		{
             ShoppingCart shoppingCart = new()
             {
-                Product = await _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category"),
+                Product = await _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category,ProductSizes"),
                 count = 1,
                 ProductId = productId
-            }; 
+            };
+            ViewBag.sizes = shoppingCart.Product.ProductSizes.Select(u => new SelectListItem
+            {
+                Text = u.Name,
+                Value = u.Id.ToString()
+            });
 			return View(shoppingCart);
         }
         [HttpPost]
@@ -53,7 +59,7 @@ namespace EmpireApp.Areas.Customer.Controllers
             ShoppingCart cardFromDb = await _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == UserId &&
             u.ProductId == shoppingCart.ProductId);
 
-            if (cardFromDb != null)
+            if (cardFromDb != null && cardFromDb.productSizeId == shoppingCart.productSizeId)
             {
                 cardFromDb.count += shoppingCart.count;
                 _unitOfWork.ShoppingCart.update(cardFromDb);

@@ -60,7 +60,7 @@
 
               <div class="row">
                 <dt class="col-3">Type:</dt>
-                            <dd class="col-9">@Model.Product.Category</dd>
+                            <dd class="col-9">@Model.Product.Category.Name</dd>
 
                 <dt class="col-3">Color</dt>
                 <dd class="col-9">Brown</dd>
@@ -77,11 +77,9 @@
               <div class="row mb-4">
                 <div class="col-md-4 col-6">
                   <label class="mb-2">Size</label>
-                  <select id="selectMenu" class="form-select border border-secondary" style="height: 35px;">
-                    <option>Small</option>
-                    <option>Medium</option>
-                    <option>Large</option>
-                  </select>
+                    <select asp-for="productSizeId" asp-items="@ViewBag.sizes" class="form-select border-0 shadow">
+                        <option disabled selected>--Select Category--</option>
+                    </select>
                 </div>
     @*             <h1 id="h1test" style="display:none;">hey</h1> *@
                 <!-- col.// -->
