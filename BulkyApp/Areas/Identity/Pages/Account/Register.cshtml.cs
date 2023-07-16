@@ -118,6 +118,11 @@ namespace EmpireApp.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            if (User.Identity.IsAuthenticated && !User.IsInRole(SD.Role_Admin))
+            {
+                Response.Redirect("AccessDenied");
+                return;
+            }
             Input = new()
             {
                 RoleList = _roleManager.Roles.Select(u => u.Name).Select(i => new SelectListItem
