@@ -9,5 +9,6 @@ namespace Empire.DataAccess.Repository.IRepository
 {
 	public interface IApplicationUserRepository : IRepository<ApplicationUser>
 	{
-	}
+        void update(ApplicationUser applicationUser);
+    }
 }

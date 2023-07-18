@@ -34,8 +34,12 @@ namespace EmpireApp.Areas.Customer.Controllers
                 includeProperties: "Product,productSize"),
                 orderHeader = new()
             };
+
+            IEnumerable<ProductImage> productImages = await _unitOfWork.ProductImage.GetAll();
+
             foreach(var cart in shoppingCartVM.ShoppingCartList)
             {
+                cart.Product.ProductImages = productImages.Where(u=>u.ProductId == cart.Product.Id).ToList();
                 cart.price = cart.count * (cart.Product.ListPrice - cart.Product.ListPrice * cart.Product.Discount / 100);
                 shoppingCartVM.orderHeader.OrderTotal += cart.price;
             }

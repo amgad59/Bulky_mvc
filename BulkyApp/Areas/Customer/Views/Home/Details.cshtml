@@ -7,8 +7,40 @@
       <div class="container">
         <div class="row gx-5">
           <aside class="col-lg-6">
-            <div class="border rounded-4 mb-3 d-flex justify-content-center">
-                <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit" src="@(Model.Product.ImageUrl)" />
+            <div class="border rounded-4 mb-3 justify-content-center">
+                @if (Model.Product.ProductImages != null && Model.Product.ProductImages.Count() > 0)
+                {
+                    <div id="carouselExampleIndicators" class="carousel slide">
+                        <div class="carousel-indicators">
+                            @foreach(var imageWithIndex in 
+                            Model.Product.ProductImages
+                            .Select((image,index)=>new{ProductImage = image,Index = index }))
+                            {
+                                    <button type="button" data-bs-target="#carouselExampleIndicators" 
+                                    data-bs-slide-to="@imageWithIndex.Index" class="@(imageWithIndex.Index ==0 ? "active":"")" 
+                                    aria-current="true" aria-label="Slide @imageWithIndex.Index"></button>
+                            }
+                        </div>
+                        <div class="carousel-inner">
+                            @foreach (var imageWithIndex in
+                            Model.Product.ProductImages
+                            .Select((image, index) => new { ProductImage = image, Index = index }))
+                            {
+                                <div class="@(imageWithIndex.Index ==0 ? "carousel-item active":"carousel-item")">
+                                    <img src="@imageWithIndex.ProductImage.ImageUrl" class=" w-100 vh-75" alt="...">
+                                </div>
+                            }
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                }
             </div>
             <div class="d-flex justify-content-center mb-3">
               <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big1.webp" class="item-thumb">
@@ -43,7 +75,6 @@
                   <i class="fa fa-star"></i>
                   <i class="fa fa-star"></i>
                   <i class="fas fa-star-half-alt"></i>
-
                 </div>
                 <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
                 <span class="text-success ms-2">In stock</span>
@@ -77,11 +108,11 @@
               <div class="row mb-4">
                 <div class="col-md-4 col-6">
                   <label class="mb-2">Size</label>
-                    <select asp-for="productSizeId" asp-items="@ViewBag.sizes" class="form-select border-0 shadow">
+                    <select asp-for="productSizeId" asp-items="@ViewBag.sizes" class="form-select border-0 shadow" required data-val="true" data-val-required="Please select a category">
                         <option disabled selected>--Select Category--</option>
                     </select>
+                    <span asp-validation-for="productSizeId" class="text-danger"></span>
                 </div>
-    @*             <h1 id="h1test" style="display:none;">hey</h1> *@
                 <!-- col.// -->
                 <div class="col-md-4 col-6 mb-3">
                   <label class="mb-2 d-block">Quantity</label>
@@ -105,10 +136,6 @@
     </form>
 </section>
 <!-- content -->
-@* @section Scripts{
-    <script>
-        $('#selectMenu').change(function () {
-            $('#h1test').show();
-        })
-    </script>
-} *@
+@section Scripts{
+    <partial name="_ValidationScriptsPartial"/>
+} 

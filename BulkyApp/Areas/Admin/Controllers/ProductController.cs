@@ -39,44 +39,28 @@ namespace EmpireApp.Areas.Admin.Controllers
                 productVM.product.ProductSizes = new List<ProductSize>();
                 return View(productVM);
             }
-            productVM.product = await _unitOfWork.Product.Get(u => u.Id == id, includeProperties: "ProductSizes");
+            productVM.product = await _unitOfWork.Product.Get(u => u.Id == id, includeProperties: "ProductSizes,ProductImages");
 
             if (productVM.product == null)
             {
                 return NotFound();
             }
+            if(productVM.product.Id != 0)
+            {
+                foreach (var size in productVM.product.ProductSizes)
+                {
+                    productVM.ProductSizeList.FirstOrDefault(u => u.Id == size.Id).isSelected = true;
+                }
+            }
             return View(productVM);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Upsert(ProductVM productVM, IFormFile? file)
+        public async Task<IActionResult> Upsert(ProductVM productVM, List<IFormFile> files)
         {
 
             if (ModelState.IsValid)
             {
-
-                string wwwRootPath = _webHostEnvironment.WebRootPath;
-                if (file != null)
-                {
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    string productPath = Path.Combine(wwwRootPath, @"images\product");
-                    if (!string.IsNullOrEmpty(productVM.product.ImageUrl))
-                    {
-                        var oldImagePath = Path.Combine(wwwRootPath, productVM.product.ImageUrl.TrimStart('\\'));
-                        if (System.IO.File.Exists(oldImagePath))
-                        {
-                            System.IO.File.Delete(oldImagePath);
-                        }
-                    }
-                    using (var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
-                    {
-                        await file.CopyToAsync(fileStream);
-                    }
-                    productVM.product.ImageUrl = @"\images\product\" + fileName;
-                }
-
-
-
                 if (productVM.product.Id == 0)
                     await _unitOfWork.Product.Add(productVM.product);
                 else
@@ -84,6 +68,39 @@ namespace EmpireApp.Areas.Admin.Controllers
                     _unitOfWork.Product.update(productVM.product);
                 }
                 await _unitOfWork.save();
+
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                if (files != null)
+                {
+                    foreach (IFormFile file in files)
+                    {
+                        string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                        string productPath = @"images\product\product-" + productVM.product.Id;
+                        string finalPath = Path.Combine(wwwRootPath, productPath);
+                        if (!Directory.Exists(finalPath))
+                        {
+                            Directory.CreateDirectory(finalPath);
+                        }
+                        using (var fileStream = new FileStream(Path.Combine(finalPath, fileName), FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
+                        ProductImage productImage = new()
+                        {
+                            ImageUrl = @"\" + productPath + @"\" + fileName,
+                            ProductId = productVM.product.Id,
+                        };
+                        if(productVM.product.ProductImages == null)
+                            productVM.product.ProductImages = new List<ProductImage>();
+
+                        productVM.product.ProductImages.Add(productImage);
+                    }
+                    _unitOfWork.Product.update(productVM.product);
+                    await _unitOfWork.save();
+                }
+
+
+
                 int size = productVM.ProductSizeList.Count;
                 productVM.product = await _unitOfWork.Product.Get(u => u.Id == productVM.product.Id, includeProperties: "ProductSizes",isTracked:true);
                 for (int i = 0; i < size; i++)
@@ -99,7 +116,7 @@ namespace EmpireApp.Areas.Admin.Controllers
                     }
                 }
                 await _unitOfWork.save();
-                TempData["success"] = "product created";
+                TempData["success"] = "product created/updated";
                 return RedirectToAction(nameof(Index));
             }
             IEnumerable<Category> categories = await _unitOfWork.Category.GetAll();
@@ -112,6 +129,27 @@ namespace EmpireApp.Areas.Admin.Controllers
             IEnumerable<ProductSize> productSizes = await _unitOfWork.ProductSize.GetAll();
             productVM.ProductSizeList = productSizes.ToList();
             return View(productVM);
+        }
+
+        public async Task<IActionResult> DeleteImage(int imageId)
+        {
+            var imageToBeDeleted = await _unitOfWork.ProductImage.Get(u => u.Id == imageId);
+            if (imageToBeDeleted != null)
+            {
+                if (!string.IsNullOrEmpty(imageToBeDeleted.ImageUrl))
+                {
+                    var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath,
+                        imageToBeDeleted.ImageUrl.TrimStart('\\'));
+                    if(System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+                _unitOfWork.ProductImage.Delete(imageToBeDeleted);
+                await _unitOfWork.save();
+                TempData["success"] = "Deleted Successfully";
+            }
+            return RedirectToAction(nameof(Upsert), new { id = imageToBeDeleted.ProductId});
         }
         public async Task<IActionResult> Index()
         {
@@ -132,10 +170,13 @@ namespace EmpireApp.Areas.Admin.Controllers
         {
             Product product = await _unitOfWork.Product.Get(u => u.Id == id);
             if (product == null) { return Json(new { success = false, message = "error deleting" }); }
-            var oldImagePath = Path.Combine(_webHostEnvironment.ContentRootPath, product.ImageUrl.TrimStart('\\'));
-            if (System.IO.File.Exists(oldImagePath))
+
+
+            string productPath = @"images\product\product-" + id;
+            string finalPath = Path.Combine(_webHostEnvironment.WebRootPath, productPath);
+            if (Directory.Exists(finalPath))
             {
-                System.IO.File.Delete(oldImagePath);
+                Directory.Delete(finalPath,true);
             }
             _unitOfWork.Product.Delete(product);
             await _unitOfWork.save();

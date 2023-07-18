@@ -17,7 +17,7 @@ namespace Empire.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0-preview.5.23280.1")
+                .HasAnnotation("ProductVersion", "7.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -180,10 +180,6 @@ namespace Empire.DataAccess.Migrations
                     b.Property<int>("Discount")
                         .HasColumnType("int");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("ListPrice")
                         .HasColumnType("int");
 
@@ -200,7 +196,6 @@ namespace Empire.DataAccess.Migrations
                             CategoryId = 1,
                             Description = "A white hoodie with butterflies on it",
                             Discount = 0,
-                            ImageUrl = "",
                             ListPrice = 350
                         },
                         new
@@ -209,7 +204,6 @@ namespace Empire.DataAccess.Migrations
                             CategoryId = 1,
                             Description = "A black hoodie with butterflies on it",
                             Discount = 0,
-                            ImageUrl = "",
                             ListPrice = 450
                         },
                         new
@@ -218,9 +212,30 @@ namespace Empire.DataAccess.Migrations
                             CategoryId = 1,
                             Description = "A white hoodie with Sinatraa on it",
                             Discount = 0,
-                            ImageUrl = "",
                             ListPrice = 400
                         });
+                });
+
+            modelBuilder.Entity("Empire.Models.ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("Empire.Models.ProductSize", b =>
@@ -362,8 +377,7 @@ namespace Empire.DataAccess.Migrations
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -587,6 +601,17 @@ namespace Empire.DataAccess.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("Empire.Models.ProductImage", b =>
+                {
+                    b.HasOne("Empire.Models.Product", "product")
+                        .WithMany("ProductImages")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("product");
+                });
+
             modelBuilder.Entity("Empire.Models.ShoppingCart", b =>
                 {
                     b.HasOne("Empire.Models.ApplicationUser", "ApplicationUser")
@@ -678,6 +703,11 @@ namespace Empire.DataAccess.Migrations
                         .HasForeignKey("productsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Empire.Models.Product", b =>
+                {
+                    b.Navigation("ProductImages");
                 });
 #pragma warning restore 612, 618
         }

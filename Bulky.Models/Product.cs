@@ -28,10 +28,10 @@ namespace Empire.Models
 		[ForeignKey("CategoryId")]
         [ValidateNever]
         public Category Category { get; set; }
-        [ValidateNever]
-        public string ImageUrl { get; set; }
         public int Discount { get; set; }
         [ValidateNever]
         public virtual List<ProductSize> ProductSizes { get; set; }
+        [ValidateNever]
+        public List<ProductImage> ProductImages { get; set; }
     }
 }

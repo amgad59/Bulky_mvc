@@ -19,8 +19,17 @@ namespace Empire.DataAccess.Repository
 		}
 		public void update(Product product)
         {
-            _db.Products.Update(product);
-		}
+            var objFromDb = _db.Products.FirstOrDefault(u=>u.Id == product.Id);
+            if (objFromDb != null)
+            {
+                objFromDb.ListPrice = product.ListPrice;
+                objFromDb.Discount = product.Discount;
+                objFromDb.CategoryId = product.CategoryId;
+                objFromDb.Description = product.Description;
+                objFromDb.ProductSizes = product.ProductSizes;
+                objFromDb.ProductImages = product.ProductImages;
+            }
+        }
 		public void deleteSize(Product product,int productSizeId)
 		{
             if (product != null)

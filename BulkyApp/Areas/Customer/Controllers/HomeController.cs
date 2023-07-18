@@ -29,7 +29,7 @@ namespace EmpireApp.Areas.Customer.Controllers
         public async Task<IActionResult> Index()
 		{
 
-            IEnumerable<Product> products = await _unitOfWork.Product.GetAll(includeProperties: "ProductSizes");
+            IEnumerable<Product> products = await _unitOfWork.Product.GetAll(includeProperties: "ProductSizes,ProductImages");
 
             return View(products.ToList());
         }
@@ -37,7 +37,7 @@ namespace EmpireApp.Areas.Customer.Controllers
 		{
             ShoppingCart shoppingCart = new()
             {
-                Product = await _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category,ProductSizes"),
+                Product = await _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category,ProductSizes,ProductImages"),
                 count = 1,
                 ProductId = productId
             };
@@ -59,7 +59,7 @@ namespace EmpireApp.Areas.Customer.Controllers
             ShoppingCart cardFromDb = await _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == UserId &&
             u.ProductId == shoppingCart.ProductId);
 
-            if (cardFromDb != null && cardFromDb.productSizeId == shoppingCart.productSizeId)
+			if (cardFromDb != null && cardFromDb.productSizeId == shoppingCart.productSizeId)
             {
                 cardFromDb.count += shoppingCart.count;
                 _unitOfWork.ShoppingCart.update(cardFromDb);
