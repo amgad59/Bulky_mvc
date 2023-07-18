@@ -1,4 +1,5 @@
-﻿@model ShoppingCart
+﻿@using System.Globalization;
+@model ShoppingCart
 
 <!-- content -->
 <section class="py-5">
@@ -42,31 +43,13 @@
                     </div>
                 }
             </div>
-            <div class="d-flex justify-content-center mb-3">
-              <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big1.webp" class="item-thumb">
-                <img width="60" height="60" class="rounded-2" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big1.webp" />
-              </a>
-              <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big2.webp" class="item-thumb">
-                <img width="60" height="60" class="rounded-2" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big2.webp" />
-              </a>
-              <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big3.webp" class="item-thumb">
-                <img width="60" height="60" class="rounded-2" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big3.webp" />
-              </a>
-              <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big4.webp" class="item-thumb">
-                <img width="60" height="60" class="rounded-2" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big4.webp" />
-              </a>
-              <a data-fslightbox="mygalley" class="border mx-1 rounded-2" target="_blank" data-type="image" href="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big.webp" class="item-thumb">
-                <img width="60" height="60" class="rounded-2" src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/detail1/big.webp" />
-              </a>
-            </div>
             <!-- thumbs-wrap.// -->
             <!-- gallery-wrap .end// -->
           </aside>
           <main class="col-lg-6">
             <div class="ps-lg-3">
                         <h4 class="title text-dark">
-                            Quality Men's Hoodie for Winter, Men's Fashion
-                            Casual Hoodie
+                            @Model.Product.Description
               </h4>
               <div class="d-flex flex-row my-3">
                 <div class="text-warning mb-1 me-2">
@@ -76,13 +59,13 @@
                   <i class="fa fa-star"></i>
                   <i class="fas fa-star-half-alt"></i>
                 </div>
-                <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
-                <span class="text-success ms-2">In stock</span>
               </div>
 
               <div class="mb-3">
-                <span class="h5">@Model.Product.ListPrice.ToString("c")</span>
-                <span class="text-muted">/per box</span>
+                <span class="h5">
+                    @Model.Product.ListPrice.ToString("C3",CultureInfo.CreateSpecificCulture("en-EG"))
+                </span>
+                <span class="text-muted">/per item</span>
               </div>
 
               <p>
@@ -127,7 +110,6 @@
                   </div>
                 </div>
               </div>
-              <a href="#" class="btn btn-warning shadow-0"> Buy now </a>
               <button type="submit" class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </button>
             </div>
           </main>
