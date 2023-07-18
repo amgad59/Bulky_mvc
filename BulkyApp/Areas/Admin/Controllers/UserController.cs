@@ -50,12 +50,14 @@ namespace EmpireApp.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> RoleManagement(RoleManagementVM roleManagementVM)
         {
+            var oldRole = _userManager.GetRolesAsync(roleManagementVM.ApplicationUser).GetAwaiter().GetResult().FirstOrDefault();
+
             ApplicationUser applicationUser = await _unitOfWork.ApplicationUser
                 .Get(u=>u.Id == roleManagementVM.ApplicationUser.Id,isTracked:true);
 
-            if(!(roleManagementVM.ApplicationUser.role == roleManagementVM.ApplicationUser.role))
+            if(!(roleManagementVM.ApplicationUser.role == oldRole))
             {
-                _userManager.RemoveFromRoleAsync(applicationUser, roleManagementVM.ApplicationUser.role).GetAwaiter().GetResult();
+                _userManager.RemoveFromRoleAsync(applicationUser, oldRole).GetAwaiter().GetResult();
                 _userManager.AddToRoleAsync(applicationUser, roleManagementVM.ApplicationUser.role)
                     .GetAwaiter().GetResult();
             }
