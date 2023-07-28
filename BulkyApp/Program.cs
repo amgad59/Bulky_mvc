@@ -10,6 +10,11 @@ using EmpireApp.Services.IServices;
 using EmpireApp.Services;
 using System.Configuration;
 using Empire.DataAccess.DbInitializer;
+using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
+using System.Globalization;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);  
 
@@ -27,7 +32,21 @@ builder.Services.AddHttpClient<IPayMobService, PayMobService>();
 builder.Services.AddScoped<IPayMobService, PayMobService>();
 
 
-builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddScoped<IEmailSender, EmailSender>(); 
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+}); 
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+    options.Level = CompressionLevel.SmallestSize;
+});
+builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+{
+    options.Level = CompressionLevel.Fastest;
+});
 
 builder.Services.AddAuthentication()
     .AddGoogle(option =>
@@ -73,10 +92,17 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 app.UseHttpsRedirection();
-app.UseStaticFiles();
-
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        const int durationInSeconds = 365 * 60 * 60 * 24;
+        ctx.Context.Response.Headers[HeaderNames.CacheControl] =
+            "public,max-age=" + durationInSeconds;
+    }
+});
+app.UseResponseCompression();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
