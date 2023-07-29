@@ -1,4 +1,8 @@
-﻿@model List<Product>
+﻿@using Microsoft.Net.Http.Headers;
+@model List<Product>
+@{
+    Context.Response.Headers["Cache-Control"] = "public, max-age=3600";
+}
 <!-- banner section -->
 <section style="background-color: black;">
     <div class="container">

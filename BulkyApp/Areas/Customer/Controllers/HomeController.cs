@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using NuGet.Common;
+using NuGet.Protocol;
 using System.Diagnostics;
 using System.Security.Claims;
 using static EmpireApp.Services.PayMobService;
@@ -16,7 +18,7 @@ using static EmpireApp.Services.PayMobService;
 namespace EmpireApp.Areas.Customer.Controllers
 {
 	[Area("Customer")]
-	public class HomeController : Controller
+    public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
@@ -25,12 +27,11 @@ namespace EmpireApp.Areas.Customer.Controllers
             _logger = logger;
             _unitOfWork = unitOfWork;
         }
-
+        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Any)]
         public async Task<IActionResult> Index()
 		{
 
             IEnumerable<Product> products = await _unitOfWork.Product.GetAll(includeProperties: "ProductSizes,ProductImages");
-
             return View(products.ToList());
         }
         public async Task<IActionResult> Details(int productId)
