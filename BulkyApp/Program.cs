@@ -15,7 +15,6 @@ using System.IO.Compression;
 using System.Globalization;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Net.Http.Headers;
-using Microsoft.AspNetCore.ResponseCaching;
 
 var builder = WebApplication.CreateBuilder(args);  
 
@@ -39,7 +38,7 @@ builder.Services.AddResponseCompression(options =>
     options.EnableForHttps = true;
     options.Providers.Add<BrotliCompressionProvider>();
     options.Providers.Add<GzipCompressionProvider>();
-});
+}); 
 builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 {
     options.Level = CompressionLevel.SmallestSize;
@@ -81,7 +80,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-builder.Services.AddResponseCaching();
+
 builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
@@ -102,13 +101,7 @@ app.UseStaticFiles(new StaticFileOptions
         ctx.Context.Response.Headers[HeaderNames.CacheControl] =
             "public,max-age=" + durationInSeconds;
     }
-}); 
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Add("cache-control", "public, max-age=3600");
-    await next();
 });
-app.UseResponseCaching();
 app.UseResponseCompression();
 app.UseRouting();
 app.UseAuthentication();
