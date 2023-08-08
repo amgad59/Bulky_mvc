@@ -1,0 +1,35 @@
+version: '3.4'
+
+networks:
+  Empire_network:
+
+services:
+  EmpireDb:
+    container_name: app_db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - 8002:1433 
+    networks:
+      - Empire_network
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=@Aa6583865
+    volumes:
+      - ./src/data:/var/opt/mssql/data 
+  empireapp:
+    container_name: Empire-App
+    image: ${DOCKER_REGISTRY-}empireapp
+    build:
+      context: .
+      dockerfile: EmpireApp/Dockerfile
+    depends_on:
+      - EmpireDb
+    networks:
+      - Empire_network    
+    ports:
+      - 8001:80
+      - 3000:443
+    environment:
+        - DB_HOST=empireDB
+        - DB_NAME=empireApp
+        - SA_PASSWORD=@Aa6583865

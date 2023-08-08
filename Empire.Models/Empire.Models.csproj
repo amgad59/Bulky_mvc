@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="7.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bulky.Models\Empire.Models.csproj" />
-    <ProjectReference Include="..\Bulky.Utilities\Empire.Utilities.csproj" />
+    <ProjectReference Include="..\Empire.Utilities\Empire.Utilities.csproj" />
   </ItemGroup>
 
 </Project>

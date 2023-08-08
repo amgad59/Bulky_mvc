@@ -1,25 +1,27 @@
-using Empire.DataAccess.Data;
-using Empire.DataAccess.Repository;
-using Empire.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Empire.Utilities;
-using EmpireApp.Services.IServices;
-using EmpireApp.Services;
-using System.Configuration;
-using Empire.DataAccess.DbInitializer;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
-using System.Globalization;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Net.Http.Headers;
+using Empire.Utilities;
+using EmpireApp.Services;
+using EmpireApp.Services.IServices;
+using Empire.DataAccess.Data;
+using Empire.DataAccess.DbInitializer;
+using Empire.DataAccess.Repository;
+using Empire.DataAccess.Repository.IRepository;
 
 var builder = WebApplication.CreateBuilder(args);  
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+var DBhost = Environment.GetEnvironmentVariable("DB_HOST");
+var DBName = Environment.GetEnvironmentVariable("DB_NAME");
+var DBpw = Environment.GetEnvironmentVariable("SA_PASSWORD");
+
+var connectionString = $"Data Source={DBhost};Initial Catalog={DBName};User ID=sa;Password={DBpw}";
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")));
 
