@@ -1,5 +1,11 @@
 ## https://empiredesigns.azurewebsites.net/
-Deployed on Microsoft Azure
+Deployed on Microsoft Azure  
+Paused the deployment to reduce costs ☹  
+you can use it on your local machine using docker just run 
+```
+docker-compose up
+```
+then visit the the local host with port 3000 [link](https://localhost:3000/)
 ## if you want to try the paymob payment service here is a test card 
 Card Number	5123456789012346  
 Cardholder Name	Test Account  
