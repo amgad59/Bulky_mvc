@@ -14,7 +14,7 @@ Expiry Year	25
 CVV	123  
 
 ## Admin panel
-For local host testing of the admin panel admin@gmail.com:Admin123*
+For local host testing of the admin panel admin@gmail.com:Admin123* <br/><br/>
 ![image](https://github.com/amgad59/Bulky_mvc/assets/76216074/c64df846-1bd3-48ae-8302-89a36aef458f)
 ![image](https://github.com/amgad59/Bulky_mvc/assets/76216074/c3245896-9b4a-4bfc-b9b3-19c504a1864c)
 ![image](https://github.com/amgad59/Bulky_mvc/assets/76216074/becf8c4c-4174-4f20-83c3-9cafd97f289f)
