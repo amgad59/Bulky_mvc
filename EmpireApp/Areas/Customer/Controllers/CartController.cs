@@ -30,12 +30,12 @@ namespace EmpireApp.Areas.Customer.Controllers
 
             ShoppingCartVM shoppingCartVM = new()
             {
-                ShoppingCartList = await _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,
+                ShoppingCartList = await _unitOfWork.ShoppingCart.GetAllEntities(u => u.ApplicationUserId == userId,
                 includeProperties: "Product,productSize"),
                 orderHeader = new()
             };
 
-            IEnumerable<ProductImage> productImages = await _unitOfWork.ProductImage.GetAll();
+            IEnumerable<ProductImage> productImages = await _unitOfWork.ProductImage.GetAllEntities();
 
             foreach(var cart in shoppingCartVM.ShoppingCartList)
             {
@@ -52,12 +52,12 @@ namespace EmpireApp.Areas.Customer.Controllers
 
             ShoppingCartVM shoppingCartVM = new()
             {
-                ShoppingCartList = await _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId,
+                ShoppingCartList = await _unitOfWork.ShoppingCart.GetAllEntities(u => u.ApplicationUserId == userId,
                 includeProperties: "Product,productSize"),
                 orderHeader = new()
             };
 
-            shoppingCartVM.orderHeader.ApplicationUser = await _unitOfWork.ApplicationUser.Get(u=>u.Id == userId);
+            shoppingCartVM.orderHeader.ApplicationUser = await _unitOfWork.ApplicationUser.GetEntity(u=>u.Id == userId);
 
             foreach (var cart in shoppingCartVM.ShoppingCartList)
             {
@@ -75,23 +75,23 @@ namespace EmpireApp.Areas.Customer.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            OrderHeader orderHeader = await _unitOfWork.OrderHeader.Get(u => u.ApplicationUserId == userId && u.PaymentStatus == SD.PaymentStatusPending);
+            OrderHeader orderHeader = await _unitOfWork.OrderHeader.GetEntity(u => u.ApplicationUserId == userId && u.PaymentStatus == SD.PaymentStatusPending);
 
             if (orderHeader != null)
             {
                 shoppingCartVM.orderHeader.Id = orderHeader.Id;
-                IEnumerable<OrderDetail> orderDetails = await _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderHeader.Id);
+                IEnumerable<OrderDetail> orderDetails = await _unitOfWork.OrderDetail.GetAllEntities(u => u.OrderHeaderId == orderHeader.Id);
                 _unitOfWork.OrderDetail.DeleteAll(orderDetails);
-                await _unitOfWork.save();
+                await _unitOfWork.Save();
             }
 
-                shoppingCartVM.ShoppingCartList = await _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId
+                shoppingCartVM.ShoppingCartList = await _unitOfWork.ShoppingCart.GetAllEntities(u => u.ApplicationUserId == userId
             ,includeProperties: "Product");
 
             shoppingCartVM.orderHeader.OrderDate = DateTime.Now;
             shoppingCartVM.orderHeader.ApplicationUserId = userId;
 
-            ApplicationUser applicationUser = await _unitOfWork.ApplicationUser.Get(u=>u.Id == userId);
+            ApplicationUser applicationUser = await _unitOfWork.ApplicationUser.GetEntity(u=>u.Id == userId);
 
             foreach (var cart in shoppingCartVM.ShoppingCartList)
             {
@@ -102,11 +102,11 @@ namespace EmpireApp.Areas.Customer.Controllers
             shoppingCartVM.orderHeader.PaymentStatus = SD.PaymentStatusPending;
             if (orderHeader != null )
             {
-                _unitOfWork.OrderHeader.update(shoppingCartVM.orderHeader);
+                _unitOfWork.OrderHeader.Update(shoppingCartVM.orderHeader);
             }
             else
                 await _unitOfWork.OrderHeader.Add(shoppingCartVM.orderHeader);
-            await _unitOfWork.save();
+            await _unitOfWork.Save();
 
             List<Item> items = new List<Item>();
             foreach(var cart in shoppingCartVM.ShoppingCartList)
@@ -121,7 +121,7 @@ namespace EmpireApp.Areas.Customer.Controllers
                 };
                 items.Add(new Item {amount_cents = cart.price*100,description = cart.Product.Description,name=cart.Product.Description,quantity=cart.count });
                 await _unitOfWork.OrderDetail.Add(orderDetail);
-                await _unitOfWork.save();
+                await _unitOfWork.Save();
             }
 
 
@@ -177,14 +177,14 @@ namespace EmpireApp.Areas.Customer.Controllers
             var id = int.Parse(query["id"]);
             int order_Id = int.Parse(query["order"]);
             bool success = Convert.ToBoolean(query["success"]);
-            var OrderHeader = await _unitOfWork.OrderHeader.Get(u => u.ApplicationUserId == userId && u.PaymentStatus == SD.PaymentStatusPending);
-            IEnumerable<ShoppingCart> shoppingCarts = await _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId);
+            var OrderHeader = await _unitOfWork.OrderHeader.GetEntity(u => u.ApplicationUserId == userId && u.PaymentStatus == SD.PaymentStatusPending);
+            IEnumerable<ShoppingCart> shoppingCarts = await _unitOfWork.ShoppingCart.GetAllEntities(u => u.ApplicationUserId == userId);
             if (success)
             {
                 _unitOfWork.ShoppingCart.DeleteAll(shoppingCarts);
                 await _unitOfWork.OrderHeader.UpdatePayMobPaymentID(OrderHeader.Id, order_Id, id);
                 await _unitOfWork.OrderHeader.UpdateStatus(OrderHeader.Id, SD.StatusApproved, SD.PaymentStatusApproved);
-                await _unitOfWork.save();
+                await _unitOfWork.Save();
                 return RedirectToAction(nameof(OrderConfirmation), new { order_id = order_Id });
             }
             return NotFound();
@@ -196,39 +196,39 @@ namespace EmpireApp.Areas.Customer.Controllers
         }
         public async Task<IActionResult> plus(int cartId)
         {
-            ShoppingCart shoppingCart = await _unitOfWork.ShoppingCart.Get(u=>u.Id == cartId);
+            ShoppingCart shoppingCart = await _unitOfWork.ShoppingCart.GetEntity(u=>u.Id == cartId);
             shoppingCart.count += 1;
 
-            _unitOfWork.ShoppingCart.update(shoppingCart);
-            await _unitOfWork.save();
+            _unitOfWork.ShoppingCart.Update(shoppingCart);
+            await _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
         public async Task<IActionResult> minus(int cartId)
         {
-            ShoppingCart shoppingCart = await _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
+            ShoppingCart shoppingCart = await _unitOfWork.ShoppingCart.GetEntity(u => u.Id == cartId);
             if (shoppingCart.count <= 1)
             {
                 _unitOfWork.ShoppingCart.Delete(shoppingCart); 
                 HttpContext.Session.SetInt32(SD.SessionCart,
-                    _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == shoppingCart.ApplicationUserId)
+                    _unitOfWork.ShoppingCart.GetAllEntities(u => u.ApplicationUserId == shoppingCart.ApplicationUserId)
                     .GetAwaiter().GetResult().Count() - 1);
             }
             else
             {
                 shoppingCart.count -= 1;
-                _unitOfWork.ShoppingCart.update(shoppingCart);
+                _unitOfWork.ShoppingCart.Update(shoppingCart);
             }
-            await _unitOfWork.save();
+            await _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
         public async Task<IActionResult> remove(int cartId)
         {
-            ShoppingCart shoppingCart = await _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
+            ShoppingCart shoppingCart = await _unitOfWork.ShoppingCart.GetEntity(u => u.Id == cartId);
             _unitOfWork.ShoppingCart.Delete(shoppingCart);
             HttpContext.Session.SetInt32(SD.SessionCart,
-                   _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == shoppingCart.ApplicationUserId)
+                   _unitOfWork.ShoppingCart.GetAllEntities(u => u.ApplicationUserId == shoppingCart.ApplicationUserId)
                    .GetAwaiter().GetResult().Count() -1);
-            await _unitOfWork.save();
+            await _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }
 

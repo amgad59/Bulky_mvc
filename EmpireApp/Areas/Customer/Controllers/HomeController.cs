@@ -29,7 +29,7 @@ namespace EmpireApp.Areas.Customer.Controllers
         public async Task<IActionResult> Index()
 		{
 
-            IEnumerable<Product> products = await _unitOfWork.Product.GetAll(includeProperties: "ProductSizes,ProductImages");
+            IEnumerable<Product> products = await _unitOfWork.Product.GetAllEntities(includeProperties: "ProductSizes,ProductImages");
 
             return View(products.ToList());
         }
@@ -37,7 +37,7 @@ namespace EmpireApp.Areas.Customer.Controllers
 		{
             ShoppingCart shoppingCart = new()
             {
-                Product = await _unitOfWork.Product.Get(u => u.Id == productId, includeProperties: "Category,ProductSizes,ProductImages"),
+                Product = await _unitOfWork.Product.GetEntity(u => u.Id == productId, includeProperties: "Category,ProductSizes,ProductImages"),
                 count = 1,
                 ProductId = productId
             };
@@ -56,21 +56,21 @@ namespace EmpireApp.Areas.Customer.Controllers
             var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             shoppingCart.ApplicationUserId = UserId;
 
-            ShoppingCart cardFromDb = await _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == UserId &&
+            ShoppingCart cardFromDb = await _unitOfWork.ShoppingCart.GetEntity(u => u.ApplicationUserId == UserId &&
             u.ProductId == shoppingCart.ProductId);
 
 			if (cardFromDb != null && cardFromDb.productSizeId == shoppingCart.productSizeId)
             {
                 cardFromDb.count += shoppingCart.count;
-                _unitOfWork.ShoppingCart.update(cardFromDb);
-                await _unitOfWork.save();
+                _unitOfWork.ShoppingCart.Update(cardFromDb);
+                await _unitOfWork.Save();
             }
             else
             {
                 await _unitOfWork.ShoppingCart.Add(shoppingCart);
-                await _unitOfWork.save();
+                await _unitOfWork.Save();
                 HttpContext.Session.SetInt32(SD.SessionCart,
-                    _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == UserId).GetAwaiter().GetResult().Count());
+                    _unitOfWork.ShoppingCart.GetAllEntities(u => u.ApplicationUserId == UserId).GetAwaiter().GetResult().Count());
             }
 
             TempData["success"] = "Added to Cart";

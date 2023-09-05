@@ -23,7 +23,7 @@ namespace EmpireApp.ViewComponents
                 if (HttpContext.Session.GetInt32(SD.SessionCart) == null)
                 {
                     HttpContext.Session.SetInt32(SD.SessionCart,
-                       _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value)
+                       _unitOfWork.ShoppingCart.GetAllEntities(u => u.ApplicationUserId == claim.Value)
                        .GetAwaiter().GetResult().Count());
                 }
                 return View(HttpContext.Session.GetInt32(SD.SessionCart));

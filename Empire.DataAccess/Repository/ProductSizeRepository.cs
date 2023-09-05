@@ -12,13 +12,16 @@ namespace Empire.DataAccess.Repository
     public class ProductSizeRepository : Repository<ProductSize>, IProductSizeRepository
     {
         private readonly ApplicationDbContext _db;
-        public ProductSizeRepository(ApplicationDbContext db) : base(db)
+
+        public ProductSizeRepository(ApplicationDbContext db)
+            : base(db)
         {
             _db = db;
         }
-        public void update(ProductSize productSize)
+
+        public void Update(ProductSize product)
         {
-            _db.ProductSizes.Update(productSize);
+            _db.ProductSizes.Update(product);
         }
     }
 }

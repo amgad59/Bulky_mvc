@@ -9,17 +9,19 @@ using System.Threading.Tasks;
 
 namespace Empire.DataAccess.Repository
 {
-	public class ProductImageRepository : Repository<ProductImage>, IProductImageRepository
+    public class ProductImageRepository : Repository<ProductImage>, IProductImageRepository
     {
-		private ApplicationDbContext _db;
-        public ProductImageRepository(ApplicationDbContext db) : base(db)
+        private ApplicationDbContext _db;
+
+        public ProductImageRepository(ApplicationDbContext db)
+            : base(db)
         {
-			_db = db;
+            _db = db;
         }
 
-		public void update(ProductImage productImage)
-		{
-			_db.ProductImages.Update(productImage);
-		}
-	}
+        public void Update(ProductImage productImage)
+        {
+            _db.ProductImages.Update(productImage);
+        }
+    }
 }

@@ -24,14 +24,14 @@ namespace EmpireApp.Areas.Admin.Controllers
         public async Task<IActionResult> Upsert(int? id)
         {
             ProductVM productVM = new ProductVM();
-            IEnumerable<Category> categories = await _unitOfWork.Category.GetAll();
+            IEnumerable<Category> categories = await _unitOfWork.Category.GetAllEntities();
             productVM.CategoryList = categories
                 .Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
                 });
-            IEnumerable<ProductSize> productSizes = await _unitOfWork.ProductSize.GetAll();
+            IEnumerable<ProductSize> productSizes = await _unitOfWork.ProductSize.GetAllEntities();
             productVM.ProductSizeList = productSizes.ToList();
             if (id == null || id == 0)
             {
@@ -39,7 +39,7 @@ namespace EmpireApp.Areas.Admin.Controllers
                 productVM.product.ProductSizes = new List<ProductSize>();
                 return View(productVM);
             }
-            productVM.product = await _unitOfWork.Product.Get(u => u.Id == id, includeProperties: "ProductSizes,ProductImages");
+            productVM.product = await _unitOfWork.Product.GetEntity(u => u.Id == id, includeProperties: "ProductSizes,ProductImages");
 
             if (productVM.product == null)
             {
@@ -65,9 +65,9 @@ namespace EmpireApp.Areas.Admin.Controllers
                     await _unitOfWork.Product.Add(productVM.product);
                 else
                 {
-                    _unitOfWork.Product.update(productVM.product);
+                    _unitOfWork.Product.Update(productVM.product);
                 }
-                await _unitOfWork.save();
+                await _unitOfWork.Save();
 
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
                 if (files != null)
@@ -95,45 +95,45 @@ namespace EmpireApp.Areas.Admin.Controllers
 
                         productVM.product.ProductImages.Add(productImage);
                     }
-                    _unitOfWork.Product.update(productVM.product);
-                    await _unitOfWork.save();
+                    _unitOfWork.Product.Update(productVM.product);
+                    await _unitOfWork.Save();
                 }
 
 
 
                 int size = productVM.ProductSizeList.Count;
-                productVM.product = await _unitOfWork.Product.Get(u => u.Id == productVM.product.Id, includeProperties: "ProductSizes",isTracked:true);
+                productVM.product = await _unitOfWork.Product.GetEntity(u => u.Id == productVM.product.Id, includeProperties: "ProductSizes",isTracked:true);
                 for (int i = 0; i < size; i++)
                 {
                     if (!productVM.ProductSizeList[i].isSelected)
                     {
-                        _unitOfWork.Product.deleteSize(productVM.product, productVM.ProductSizeList[i].Id);
+                        _unitOfWork.Product.DeleteSize(productVM.product, productVM.ProductSizeList[i].Id);
 
                     }
                     else
                     {
-                        await _unitOfWork.Product.addSize(productVM.product, productVM.ProductSizeList[i].Id);
+                        await _unitOfWork.Product.AddSize(productVM.product, productVM.ProductSizeList[i].Id);
                     }
                 }
-                await _unitOfWork.save();
+                await _unitOfWork.Save();
                 TempData["success"] = "product created/updated";
                 return RedirectToAction(nameof(Index));
             }
-            IEnumerable<Category> categories = await _unitOfWork.Category.GetAll();
+            IEnumerable<Category> categories = await _unitOfWork.Category.GetAllEntities();
             productVM.CategoryList = categories
                 .Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
                 });
-            IEnumerable<ProductSize> productSizes = await _unitOfWork.ProductSize.GetAll();
+            IEnumerable<ProductSize> productSizes = await _unitOfWork.ProductSize.GetAllEntities();
             productVM.ProductSizeList = productSizes.ToList();
             return View(productVM);
         }
 
         public async Task<IActionResult> DeleteImage(int imageId)
         {
-            var imageToBeDeleted = await _unitOfWork.ProductImage.Get(u => u.Id == imageId);
+            var imageToBeDeleted = await _unitOfWork.ProductImage.GetEntity(u => u.Id == imageId);
             if (imageToBeDeleted != null)
             {
                 if (!string.IsNullOrEmpty(imageToBeDeleted.ImageUrl))
@@ -146,14 +146,14 @@ namespace EmpireApp.Areas.Admin.Controllers
                     }
                 }
                 _unitOfWork.ProductImage.Delete(imageToBeDeleted);
-                await _unitOfWork.save();
+                await _unitOfWork.Save();
                 TempData["success"] = "Deleted Successfully";
             }
             return RedirectToAction(nameof(Upsert), new { id = imageToBeDeleted.ProductId});
         }
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Product> productList = await _unitOfWork.Product.GetAll(includeProperties: "Category,ProductSizes");
+            IEnumerable<Product> productList = await _unitOfWork.Product.GetAllEntities(includeProperties: "Category,ProductSizes");
             return View(productList.ToList());
         }
 
@@ -162,13 +162,13 @@ namespace EmpireApp.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            IEnumerable<Product> products = await _unitOfWork.Product.GetAll(includeProperties: "Category,ProductSizes");
+            IEnumerable<Product> products = await _unitOfWork.Product.GetAllEntities(includeProperties: "Category,ProductSizes");
             return Json(new { data = products.ToList() });
         }
         [HttpDelete]
         public async Task<IActionResult> Delete(int? id)
         {
-            Product product = await _unitOfWork.Product.Get(u => u.Id == id);
+            Product product = await _unitOfWork.Product.GetEntity(u => u.Id == id);
             if (product == null) { return Json(new { success = false, message = "error deleting" }); }
 
 
@@ -179,7 +179,7 @@ namespace EmpireApp.Areas.Admin.Controllers
                 Directory.Delete(finalPath,true);
             }
             _unitOfWork.Product.Delete(product);
-            await _unitOfWork.save();
+            await _unitOfWork.Save();
             return Json(new { success = true, message = "Delete success" });
         }
         #endregion

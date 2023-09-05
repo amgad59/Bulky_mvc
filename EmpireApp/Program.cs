@@ -17,11 +17,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-var DBhost = Environment.GetEnvironmentVariable("DB_HOST");
+/*var DBhost = Environment.GetEnvironmentVariable("DB_HOST");
 var DBName = Environment.GetEnvironmentVariable("DB_NAME");
 var DBpw = Environment.GetEnvironmentVariable("SA_PASSWORD");
 
-var connectionString = $"Data Source={DBhost};Initial Catalog={DBName};User ID=sa;Password={DBpw}";
+var connectionString = $"Data Source={DBhost};Initial Catalog={DBName};User ID=sa;Password={DBpw}";*/
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")));
 

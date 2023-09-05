@@ -17,7 +17,7 @@ namespace Empire.DataAccess.Repository
 		{
 			_db = db;
 		}
-		public void update(Product product)
+		public void Update(Product product)
         {
             var objFromDb = _db.Products.FirstOrDefault(u=>u.Id == product.Id);
             if (objFromDb != null)
@@ -30,7 +30,7 @@ namespace Empire.DataAccess.Repository
                 objFromDb.ProductImages = product.ProductImages;
             }
         }
-		public void deleteSize(Product product,int productSizeId)
+		public void DeleteSize(Product product,int productSizeId)
 		{
             if (product != null)
             {
@@ -38,11 +38,11 @@ namespace Empire.DataAccess.Repository
                 if (sizeToRemove != null)
                 {
                     product.ProductSizes.Remove(sizeToRemove);
-                    update(product);
+                    Update(product);
                 }
             }
         }		
-        public async Task addSize(Product product,int productSizeId)
+        public async Task AddSize(Product product,int productSizeId)
 		{
             if (product != null)
             {
@@ -50,7 +50,7 @@ namespace Empire.DataAccess.Repository
                 if (sizeToAdd != null && !product.ProductSizes.Contains(sizeToAdd))
                 {
                     product.ProductSizes.Add(sizeToAdd);
-                    update(product);
+                    Update(product);
                 }
             }
         }

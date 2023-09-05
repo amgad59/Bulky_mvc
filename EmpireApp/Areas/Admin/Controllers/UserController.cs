@@ -34,10 +34,10 @@ namespace EmpireApp.Areas.Admin.Controllers
         }
         public async Task<IActionResult> RoleManagement(string userId)
         {
-            var user = await _unitOfWork.ApplicationUser.Get(u=>u.Id == userId);
+            var user = await _unitOfWork.ApplicationUser.GetEntity(u=>u.Id == userId);
             RoleManagementVM roleManagementVM = new RoleManagementVM()
             {
-                ApplicationUser = await _unitOfWork.ApplicationUser.Get(u => u.Id == userId),
+                ApplicationUser = await _unitOfWork.ApplicationUser.GetEntity(u => u.Id == userId),
                 RoleList = _roleManager.Roles.Select(i => new SelectListItem
                 {
                     Text = i.Name,
@@ -53,7 +53,7 @@ namespace EmpireApp.Areas.Admin.Controllers
             var oldRole = _userManager.GetRolesAsync(roleManagementVM.ApplicationUser).GetAwaiter().GetResult().FirstOrDefault();
 
             ApplicationUser applicationUser = await _unitOfWork.ApplicationUser
-                .Get(u=>u.Id == roleManagementVM.ApplicationUser.Id,isTracked:true);
+                .GetEntity(u=>u.Id == roleManagementVM.ApplicationUser.Id,isTracked:true);
 
             if(!(roleManagementVM.ApplicationUser.role == oldRole))
             {
@@ -69,7 +69,7 @@ namespace EmpireApp.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            List<ApplicationUser> users = _unitOfWork.ApplicationUser.GetAll().GetAwaiter().GetResult().ToList();
+            List<ApplicationUser> users = _unitOfWork.ApplicationUser.GetAllEntities().GetAwaiter().GetResult().ToList();
 
             foreach(var user in users)
             {
@@ -81,7 +81,7 @@ namespace EmpireApp.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> LockUnlock([FromBody]string id)
         {
-            var user = await _unitOfWork.ApplicationUser.Get(u => u.Id == id);
+            var user = await _unitOfWork.ApplicationUser.GetEntity(u => u.Id == id);
             if(user == null)
             {
                 return Json(new { success = false, message = "Error while unlocking" });
@@ -95,8 +95,8 @@ namespace EmpireApp.Areas.Admin.Controllers
             {
                 user.LockoutEnd = DateTime.Now.AddYears(1000);
             }
-            _unitOfWork.ApplicationUser.update(user);
-            await _unitOfWork.save();
+            _unitOfWork.ApplicationUser.Update(user);
+            await _unitOfWork.Save();
             return Json(new { success = true, message = "Operation Successful" });
         }
         #endregion

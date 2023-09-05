@@ -36,8 +36,8 @@ namespace EmpireApp.Areas.Admin.Controllers
         {
             orderVM = new()
             {
-                OrderHeader = await _unitOfWork.OrderHeader.Get(u => u.Id == orderId, includeProperties: "ApplicationUser"),
-                OrderDetail = await _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderId,includeProperties:"Product")
+                OrderHeader = await _unitOfWork.OrderHeader.GetEntity(u => u.Id == orderId, includeProperties: "ApplicationUser"),
+                OrderDetail = await _unitOfWork.OrderDetail.GetAllEntities(u => u.OrderHeaderId == orderId,includeProperties:"Product")
             };
             return View(orderVM);
         }
@@ -45,7 +45,7 @@ namespace EmpireApp.Areas.Admin.Controllers
         [Authorize(Roles =SD.Role_Admin + "," + SD.Role_Employee)]
         public async Task<IActionResult> UpdateOrderDetails()
         {
-            var orderHeaderFromDb = await _unitOfWork.OrderHeader.Get(u => u.Id == orderVM.OrderHeader.Id);
+            var orderHeaderFromDb = await _unitOfWork.OrderHeader.GetEntity(u => u.Id == orderVM.OrderHeader.Id);
             orderHeaderFromDb.Name = orderVM.OrderHeader.Name;
             orderHeaderFromDb.PhoneNumber = orderVM.OrderHeader.PhoneNumber;
             orderHeaderFromDb.StreetAddress = orderVM.OrderHeader.StreetAddress;
@@ -56,8 +56,8 @@ namespace EmpireApp.Areas.Admin.Controllers
             if(!string.IsNullOrEmpty(orderVM.OrderHeader.TrackingNumber))
                 orderHeaderFromDb.TrackingNumber = orderVM.OrderHeader.TrackingNumber;
 
-            _unitOfWork.OrderHeader.update(orderHeaderFromDb);
-            await _unitOfWork.save();
+            _unitOfWork.OrderHeader.Update(orderHeaderFromDb);
+            await _unitOfWork.Save();
             TempData["success"] = "order updated successfully";
             return RedirectToAction(nameof(Details),new {orderId = orderHeaderFromDb.Id});
         }
@@ -67,7 +67,7 @@ namespace EmpireApp.Areas.Admin.Controllers
         public async Task<IActionResult> StartProcessing()
         {
             await _unitOfWork.OrderHeader.UpdateStatus(orderVM.OrderHeader.Id,SD.StatusInProcess);
-            await _unitOfWork.save();
+            await _unitOfWork.Save();
             TempData["success"] = "order status updated";
             return RedirectToAction(nameof(Details),new {orderId = orderVM.OrderHeader.Id});
         }
@@ -76,14 +76,14 @@ namespace EmpireApp.Areas.Admin.Controllers
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         public async Task<IActionResult> ShipOrder()
         {
-            var orderHeader = await _unitOfWork.OrderHeader.Get(u => u.Id == orderVM.OrderHeader.Id);
+            var orderHeader = await _unitOfWork.OrderHeader.GetEntity(u => u.Id == orderVM.OrderHeader.Id);
             orderHeader.Carrier = orderVM.OrderHeader.Carrier;
             orderHeader.TrackingNumber = orderVM.OrderHeader.TrackingNumber;
             orderHeader.OrderStatus = SD.StatusShipped;
             orderHeader.ShippingDate = DateTime.Now;
 
-            _unitOfWork.OrderHeader.update(orderHeader);
-            await _unitOfWork.save();
+            _unitOfWork.OrderHeader.Update(orderHeader);
+            await _unitOfWork.Save();
             TempData["success"] = "order shipped successfully";
             return RedirectToAction(nameof(Details),new {orderId = orderVM.OrderHeader.Id});
         }
@@ -91,7 +91,7 @@ namespace EmpireApp.Areas.Admin.Controllers
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         public async Task<IActionResult> CancelOrder()
         {
-            var orderHeader = await _unitOfWork.OrderHeader.Get(u => u.Id == orderVM.OrderHeader.Id);
+            var orderHeader = await _unitOfWork.OrderHeader.GetEntity(u => u.Id == orderVM.OrderHeader.Id);
             if(orderHeader.TransactionId != null && orderHeader.PaymentStatus == SD.PaymentStatusApproved)
             {
                 await _payMobService.Refund<APIResponse>((int)orderHeader.TransactionId, orderHeader.OrderTotal);
@@ -101,7 +101,7 @@ namespace EmpireApp.Areas.Admin.Controllers
             {
                 await _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled);
             }
-            await _unitOfWork.save();
+            await _unitOfWork.Save();
             TempData["success"] = "order cancelled successfully";
             return RedirectToAction(nameof(Details), new { orderId = orderVM.OrderHeader.Id });
         }
@@ -115,13 +115,13 @@ namespace EmpireApp.Areas.Admin.Controllers
             IEnumerable<OrderHeader> orderHeaders;
             if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
             {
-                orderHeaders = await _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser");
+                orderHeaders = await _unitOfWork.OrderHeader.GetAllEntities(includeProperties: "ApplicationUser");
             }
             else
             {
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-                orderHeaders = await _unitOfWork.OrderHeader.GetAll(u => u.ApplicationUserId == userId, includeProperties: "ApplicationUser");
+                orderHeaders = await _unitOfWork.OrderHeader.GetAllEntities(u => u.ApplicationUserId == userId, includeProperties: "ApplicationUser");
             }
             switch (status)
 			{

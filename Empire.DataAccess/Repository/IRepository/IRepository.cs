@@ -7,12 +7,17 @@ using System.Threading.Tasks;
 
 namespace Empire.DataAccess.Repository.IRepository
 {
-	public interface IRepository<T> where T : class
-	{
-		Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>>? expression=null, string? includeProperties = null);
-		Task<T> Get(Expression<Func<T,bool>> expression,string? includeProperties = null,bool isTracked = false);
+    public interface IRepository<T>
+        where T : class
+    {
+        Task<IEnumerable<T>> GetAllEntities(Expression<Func<T, bool>>? expression = null, string? includeProperties = null);
+
+        Task<T> GetEntity(Expression<Func<T, bool>> expression, string? includeProperties = null, bool isTracked = false);
+
         Task Add(T entity);
-		void Delete(T entity);
-		void DeleteAll(IEnumerable<T> entities);
-	}
+
+        void Delete(T entity);
+
+        void DeleteAll(IEnumerable<T> entities);
+    }
 }
