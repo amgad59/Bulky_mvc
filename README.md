@@ -1,5 +1,11 @@
 ## https://empiredesigns.azurewebsites.net/
-Deployed on Microsoft Azure
+Deployed on Microsoft Azure  
+Paused the deployment to reduce costs ☹  
+you can use it on your local machine using docker just run 
+```
+docker-compose up
+```
+then visit the the local host with port 3000 [link](https://localhost:3000/)
 ## if you want to try the paymob payment service here is a test card 
 Card Number	5123456789012346  
 Cardholder Name	Test Account  
@@ -7,7 +13,8 @@ Expiry Month	12
 Expiry Year	25  
 CVV	123  
 
-## Admin panel:
+## Admin panel
+For local host testing of the admin panel admin@gmail.com:Admin123* <br/><br/>
 ![image](https://github.com/amgad59/Bulky_mvc/assets/76216074/c64df846-1bd3-48ae-8302-89a36aef458f)
 ![image](https://github.com/amgad59/Bulky_mvc/assets/76216074/c3245896-9b4a-4bfc-b9b3-19c504a1864c)
 ![image](https://github.com/amgad59/Bulky_mvc/assets/76216074/becf8c4c-4174-4f20-83c3-9cafd97f289f)
