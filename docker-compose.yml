@@ -18,17 +18,16 @@ services:
       - ./src/data:/var/opt/mssql/data 
   empireapp:
     container_name: Empire-App
-    image: ${DOCKER_REGISTRY-}empireapp
+    image: ${DOCKER_REGISTRY-}empireapp:latest
     build:
       context: .
-      dockerfile: EmpireApp/Dockerfile
+      dockerfile: /App/Dockerfile
     depends_on:
       - EmpireDb
     networks:
       - Empire_network    
     ports:
-      - 8001:80
-      - 3000:443
+      - 3000:443 
     environment:
         - DB_HOST=empireDB
         - DB_NAME=empireApp
