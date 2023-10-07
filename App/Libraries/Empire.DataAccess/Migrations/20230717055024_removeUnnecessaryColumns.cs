@@ -5,7 +5,9 @@
 namespace Empire.DataAccess.Migrations
 {
     /// <inheritdoc />
+#pragma warning disable SA1300 // Element should begin with upper-case letter
     public partial class removeUnnecessaryColumns : Migration
+#pragma warning restore SA1300 // Element should begin with upper-case letter
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,6 +24,7 @@ namespace Empire.DataAccess.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+#pragma warning disable SA1122 // Use string.Empty for empty strings
             migrationBuilder.AddColumn<string>(
                 name: "ImageUrl",
                 table: "Products",
@@ -56,6 +59,7 @@ namespace Empire.DataAccess.Migrations
                 keyValue: 3,
                 columns: new[] { "ImageUrl", "test" },
                 values: new object[] { "", 0 });
+#pragma warning restore SA1122 // Use string.Empty for empty strings
         }
     }
 }

@@ -6,9 +6,9 @@ namespace Empire.DataAccess.Repository
 {
     public class CategoryRepository : Repository<Category>, ICategoryRepository
     {
-        private ApplicationDbContext _db;
+        private readonly ApplicationDbContext _db;
 
-        public CategoryRepository(ApplicationDbContext db) 
+        public CategoryRepository(ApplicationDbContext db)
             : base(db)
         {
             _db = db;

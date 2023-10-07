@@ -5,7 +5,9 @@
 namespace Empire.DataAccess.Migrations
 {
     /// <inheritdoc />
+#pragma warning disable SA1300 // Element should begin with upper-case letter
     public partial class addIdentityUserColumns : Migration
+#pragma warning restore SA1300 // Element should begin with upper-case letter
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

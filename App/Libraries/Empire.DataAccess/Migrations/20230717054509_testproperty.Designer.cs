@@ -13,7 +13,11 @@ namespace Empire.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20230717054509_testproperty")]
+#pragma warning disable SA1300 // Element should begin with upper-case letter
+#pragma warning disable SA1413 // Use trailing comma in multi-line initializers
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     partial class testproperty
+#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

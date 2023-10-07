@@ -28,12 +28,14 @@ namespace Empire.DataAccess.Migrations
                 table: "OrderHeaders",
                 newName: "State");
 
+#pragma warning disable SA1122 // Use string.Empty for empty strings
             migrationBuilder.AddColumn<string>(
                 name: "PostalCode",
                 table: "OrderHeaders",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
+#pragma warning restore SA1122 // Use string.Empty for empty strings
         }
     }
 }

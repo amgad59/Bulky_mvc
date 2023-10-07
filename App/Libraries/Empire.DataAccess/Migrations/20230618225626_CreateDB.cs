@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
-
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace Empire.DataAccess.Migrations
 {
     /// <inheritdoc />
+#pragma warning disable SA1413 // Use trailing comma in multi-line initializers
     public partial class CreateDB : Migration
     {
         /// <inheritdoc />

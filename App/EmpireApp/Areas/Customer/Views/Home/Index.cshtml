@@ -34,10 +34,10 @@
                 <a asp-action="Details" asp-route-productId="@product.Id">
                     @if(product.ProductImages != null && product.ProductImages.Count() > 0)
                     {
-                        <img src=@product.ProductImages.FirstOrDefault().ImageUrl alt="Card Back" class="image-bottom w-100 vh-50">
+                        <img src=@product.ProductImages.FirstOrDefault()!.ImageUrl alt="Card Back" class="image-bottom w-100 vh-50">
                         if (product.ProductImages.Count() > 1)
                         {
-                        <img src=@product.ProductImages.Skip(1).FirstOrDefault().ImageUrl alt="Card Front" class="image-top w-100 vh-50">
+                        <img src=@product.ProductImages.Skip(1).FirstOrDefault()!.ImageUrl alt="Card Front" class="image-top w-100 vh-50">
                         }
                     }
                     else{

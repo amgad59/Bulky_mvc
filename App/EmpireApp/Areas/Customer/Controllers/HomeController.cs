@@ -52,11 +52,17 @@ namespace EmpireApp.Areas.Customer.Controllers
         [Authorize]
         public async Task<IActionResult> Details(ShoppingCart shoppingCart)
 		{
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var UserId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            shoppingCart.ApplicationUserId = UserId;
+            ClaimsIdentity? claimsIdentity = (ClaimsIdentity?)User.Identity;
+            if (claimsIdentity == null)
+                return NotFound();
+            string? userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            ShoppingCart cardFromDb = await _unitOfWork.ShoppingCart.GetEntity(u => u.ApplicationUserId == UserId &&
+            if (userId == null)
+                return NotFound();
+
+            shoppingCart.ApplicationUserId = userId;
+
+            ShoppingCart cardFromDb = await _unitOfWork.ShoppingCart.GetEntity(u => u.ApplicationUserId == userId &&
             u.ProductId == shoppingCart.ProductId);
 
 			if (cardFromDb != null && cardFromDb.productSizeId == shoppingCart.productSizeId)
@@ -70,7 +76,7 @@ namespace EmpireApp.Areas.Customer.Controllers
                 await _unitOfWork.ShoppingCart.Add(shoppingCart);
                 await _unitOfWork.Save();
                 HttpContext.Session.SetInt32(SD.SessionCart,
-                    _unitOfWork.ShoppingCart.GetAllEntities(u => u.ApplicationUserId == UserId).GetAwaiter().GetResult().Count());
+                    _unitOfWork.ShoppingCart.GetAllEntities(u => u.ApplicationUserId == userId).GetAwaiter().GetResult().Count());
             }
 
             TempData["success"] = "Added to Cart";

@@ -5,11 +5,14 @@
 namespace Empire.DataAccess.Migrations
 {
     /// <inheritdoc />
+#pragma warning disable SA1300 // Element should begin with upper-case letter
     public partial class addShoppingCartToDB : Migration
+#pragma warning restore SA1300 // Element should begin with upper-case letter
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+#pragma warning disable SA1413 // Use trailing comma in multi-line initializers
             migrationBuilder.CreateTable(
                 name: "ShoppingCarts",
                 columns: table => new
@@ -36,6 +39,7 @@ namespace Empire.DataAccess.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+#pragma warning restore SA1413 // Use trailing comma in multi-line initializers
 
             migrationBuilder.CreateIndex(
                 name: "IX_ShoppingCarts_ApplicationUserId",

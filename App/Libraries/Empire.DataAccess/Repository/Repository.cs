@@ -54,7 +54,7 @@ namespace Empire.DataAccess.Repository
                 }
             }
 
-            return await query.FirstOrDefaultAsync();
+            return (await query.FirstOrDefaultAsync())!;
         }
 
         public async Task<IEnumerable<T>> GetAllEntities(Expression<Func<T, bool>>? expression = null, string? includeProperties = null)

@@ -5,7 +5,11 @@
 namespace Empire.DataAccess.Migrations
 {
     /// <inheritdoc />
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
+#pragma warning disable SA1300 // Element should begin with upper-case letter
     public partial class testproperty : Migration
+#pragma warning restore SA1300 // Element should begin with upper-case letter
+#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

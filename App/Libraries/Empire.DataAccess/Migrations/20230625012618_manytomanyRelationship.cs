@@ -5,6 +5,8 @@
 namespace Empire.DataAccess.Migrations
 {
     /// <inheritdoc />
+#pragma warning disable SA1300 // Element should begin with upper-case letter
+#pragma warning disable SA1413 // Use trailing comma in multi-line initializers
     public partial class manytomanyRelationship : Migration
     {
         /// <inheritdoc />

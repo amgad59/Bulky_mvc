@@ -17,7 +17,7 @@ namespace EmpireApp.Areas.Customer.Controllers
         private readonly IPayMobService _payMobService;
         private readonly IUnitOfWork _unitOfWork;
         [BindProperty]
-        public ShoppingCartVM shoppingCartVM { get; set; }
+        public ShoppingCartVM? shoppingCartVM { get; set; }
         public CartController(IUnitOfWork unitOfWork, IPayMobService payMobService)
         {
             _unitOfWork = unitOfWork;
@@ -25,9 +25,13 @@ namespace EmpireApp.Areas.Customer.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ClaimsIdentity? claimsIdentity = (ClaimsIdentity?)User.Identity;
+            if(claimsIdentity == null )
+                return NotFound();
+            string? userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            if (userId == null)
+                return NotFound();
             ShoppingCartVM shoppingCartVM = new()
             {
                 ShoppingCartList = await _unitOfWork.ShoppingCart.GetAllEntities(u => u.ApplicationUserId == userId,
@@ -49,8 +53,13 @@ namespace EmpireApp.Areas.Customer.Controllers
         [Authorize]
         public async Task<IActionResult> Summary()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ClaimsIdentity? claimsIdentity = (ClaimsIdentity?)User.Identity;
+            if (claimsIdentity == null)
+                return NotFound();
+            string? userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+                return NotFound();
 
             ShoppingCartVM shoppingCartVM = new()
             {
@@ -81,6 +90,12 @@ namespace EmpireApp.Areas.Customer.Controllers
 
             if (userId == null)
                 return BadRequest();
+
+
+            if (shoppingCartVM == null)
+            {
+                return BadRequest();
+            }
 
             shoppingCartVM.orderHeader.Id = await _unitOfWork.OrderHeader.CheckAvailability(userId);
 
@@ -135,16 +150,22 @@ namespace EmpireApp.Areas.Customer.Controllers
             }
             await _unitOfWork.Save();
 
-            fillDictionary(applicationUser,items);
-
+            bool success = fillDictionary(applicationUser,items);
+            if (!success)
+                return BadRequest();
             string token = await _payMobService.PayMobSetup(SD.FirstPayload, SD.SecondPayload);
             Response.Headers.Add("Location", $"https://accept.paymob.com/api/acceptance/iframes/769121?payment_token={token}");
 
             return new StatusCodeResult(303);
         }
 
-        private void fillDictionary(ApplicationUser applicationUser,List<Item> items)
+        private bool fillDictionary(ApplicationUser applicationUser,List<Item> items)
         {
+            if (shoppingCartVM == null || applicationUser.Email == null)
+            {
+                return false;
+            }
+
             SD.FirstPayload["amount_cents"] = shoppingCartVM.orderHeader.OrderTotal * 100;
             SD.FirstPayload["items"] = items;
             SD.SecondPayload["amount_cents"] = shoppingCartVM.orderHeader.OrderTotal * 100;
@@ -155,21 +176,28 @@ namespace EmpireApp.Areas.Customer.Controllers
             nestedDictionary["street"] = shoppingCartVM.orderHeader.StreetAddress;
             nestedDictionary["phone_number"] = shoppingCartVM.orderHeader.PhoneNumber;
             nestedDictionary["city"] = shoppingCartVM.orderHeader.City;
+            return true;
         }
 
         [Authorize]
         public async Task<IActionResult> OrderChecking()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ClaimsIdentity? claimsIdentity = (ClaimsIdentity?)User.Identity;
+            if (claimsIdentity == null)
+                return NotFound();
+            string? userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+                return NotFound();
+
 
             var query = Request.Query;
-            var id = int.Parse(query["id"]);
-            int order_Id = int.Parse(query["order"]);
+            bool success_id = int.TryParse(query["id"], out int id);
+            bool success_order_Id = int.TryParse(query["order"],out int order_Id);
             bool success = Convert.ToBoolean(query["success"]);
             var OrderHeader = await _unitOfWork.OrderHeader.GetEntity(u => u.ApplicationUserId == userId && u.PaymentStatus == SD.PaymentStatusPending);
             IEnumerable<ShoppingCart> shoppingCarts = await _unitOfWork.ShoppingCart.GetAllEntities(u => u.ApplicationUserId == userId);
-            if (success)
+            if (success && success_id && success_order_Id)
             {
                 _unitOfWork.ShoppingCart.DeleteAll(shoppingCarts);
                 await _unitOfWork.OrderHeader.UpdatePayMobPaymentID(OrderHeader.Id, order_Id, id);
@@ -178,7 +206,7 @@ namespace EmpireApp.Areas.Customer.Controllers
                 return RedirectToAction(nameof(OrderConfirmation), new { order_id = order_Id });
             }
             return NotFound();
-        }        
+        }
         public IActionResult OrderConfirmation(int order_id)
         {
             HttpContext.Session.Clear();

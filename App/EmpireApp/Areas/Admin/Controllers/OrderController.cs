@@ -49,6 +49,10 @@ namespace EmpireApp.Areas.Admin.Controllers
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         public async Task<IActionResult> UpdateOrderDetails()
         {
+            if(orderVM == null)
+            {
+                return BadRequest();
+            }
             var orderHeaderFromDb = await _unitOfWork.OrderHeader.GetEntity(u => u.Id == orderVM.OrderHeader.Id);
 
             if (orderVM == null)
@@ -74,6 +78,10 @@ namespace EmpireApp.Areas.Admin.Controllers
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         public async Task<IActionResult> StartProcessing()
         {
+            if (orderVM == null)
+            {
+                return BadRequest();
+            }
             await _unitOfWork.OrderHeader.UpdateStatus(orderVM.OrderHeader.Id,SD.StatusInProcess);
             await _unitOfWork.Save();
             TempData["success"] = "order status updated";
@@ -84,6 +92,10 @@ namespace EmpireApp.Areas.Admin.Controllers
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         public async Task<IActionResult> ShipOrder()
         {
+            if (orderVM == null)
+            {
+                return BadRequest();
+            }
             var orderHeader = await _unitOfWork.OrderHeader.GetEntity(u => u.Id == orderVM.OrderHeader.Id);
 
             orderHeader.Carrier = orderVM.OrderHeader.Carrier;
@@ -101,6 +113,10 @@ namespace EmpireApp.Areas.Admin.Controllers
         [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         public async Task<IActionResult> CancelOrder()
         {
+            if (orderVM == null)
+            {
+                return BadRequest();
+            }
             var orderHeader = await _unitOfWork.OrderHeader.GetEntity(u => u.Id == orderVM.OrderHeader.Id);
             if(orderHeader.TransactionId != null && orderHeader.PaymentStatus == SD.PaymentStatusApproved)
             {
@@ -129,8 +145,14 @@ namespace EmpireApp.Areas.Admin.Controllers
             }
             else
             {
-                var claimsIdentity = (ClaimsIdentity)User.Identity;
-                var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                ClaimsIdentity? claimsIdentity = (ClaimsIdentity?)User.Identity;
+                if (claimsIdentity == null)
+                    return NotFound();
+                string? userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (userId == null)
+                    return NotFound();
+
                 orderHeaders = await _unitOfWork.OrderHeader.GetAllEntities(u => u.ApplicationUserId == userId, includeProperties: "ApplicationUser");
             }
             switch (status)

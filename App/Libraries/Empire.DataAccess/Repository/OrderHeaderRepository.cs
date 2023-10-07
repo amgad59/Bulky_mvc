@@ -17,9 +17,9 @@ namespace Empire.DataAccess.Repository
             _db = db;
         }
 
-        public void Update(OrderHeader OrderHeader)
+        public void Update(OrderHeader orderHeader)
         {
-            _db.OrderHeaders.Update(OrderHeader);
+            _db.OrderHeaders.Update(orderHeader);
         }
 
         public async Task UpdateStatus(int id, string orderStatus, string? paymentStatus = null)
@@ -35,7 +35,7 @@ namespace Empire.DataAccess.Repository
             }
         }
 
-        public async Task UpdatePayMobPaymentID(int id, int? orderId, int? TransactionId)
+        public async Task UpdatePayMobPaymentID(int id, int? orderId, int? transactionId)
         {
             var order = await _db.OrderHeaders.FirstOrDefaultAsync(u => u.Id == id);
             if (order != null)
@@ -45,9 +45,9 @@ namespace Empire.DataAccess.Repository
                     order.OrderId = orderId;
                 }
 
-                if (TransactionId != null)
+                if (transactionId != null)
                 {
-                    order.TransactionId = TransactionId;
+                    order.TransactionId = transactionId;
                     order.PaymentDate = DateTime.Now;
                 }
             }
@@ -58,8 +58,8 @@ namespace Empire.DataAccess.Repository
             OrderHeader? orderHeader = await _db
                                 .OrderHeaders
                                 .AsNoTracking()
-                                .FirstOrDefaultAsync
-                                (u => u.ApplicationUserId == userId
+                                .FirstOrDefaultAsync(
+                                u => u.ApplicationUserId == userId
                                 && u.PaymentStatus == SD.PaymentStatusPending);
 
             if (orderHeader == null)

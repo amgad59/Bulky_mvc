@@ -5,6 +5,7 @@
 namespace Empire.DataAccess.Migrations
 {
     /// <inheritdoc />
+#pragma warning disable SA1300 // Element should begin with upper-case letter
     public partial class addDiscount : Migration
     {
         /// <inheritdoc />

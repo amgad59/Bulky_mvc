@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Empire.DataAccess.Migrations
 {
     /// <inheritdoc />
+#pragma warning disable SA1300 // Element should begin with upper-case letter
+#pragma warning disable SA1413 // Use trailing comma in multi-line initializers
     public partial class addIdentityTables : Migration
     {
         /// <inheritdoc />
@@ -49,7 +51,6 @@ namespace Empire.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                 });
-
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new

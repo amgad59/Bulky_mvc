@@ -4,6 +4,8 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
+#pragma warning disable SA1300 // Element should begin with upper-case letter
+#pragma warning disable SA1413 // Use trailing comma in multi-line initializers
 namespace Empire.DataAccess.Migrations
 {
     /// <inheritdoc />

@@ -20,7 +20,7 @@ namespace EmpireApp.Areas.Admin.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public UserController(ApplicationDbContext db, UserManager<IdentityUser> userManager
+        public UserController(UserManager<IdentityUser> userManager
             , RoleManager<IdentityRole> roleManager, IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -44,14 +44,17 @@ namespace EmpireApp.Areas.Admin.Controllers
                     Value = i.Name
                 })
             };
-            roleManagementVM.ApplicationUser.role = _userManager.GetRolesAsync(user).GetAwaiter().GetResult().FirstOrDefault();
+            roleManagementVM.ApplicationUser.role = _userManager.GetRolesAsync(user).GetAwaiter().GetResult().FirstOrDefault()!;
             return View(roleManagementVM);
         }
         [HttpPost]
         public async Task<IActionResult> RoleManagement(RoleManagementVM roleManagementVM)
         {
             var oldRole = _userManager.GetRolesAsync(roleManagementVM.ApplicationUser).GetAwaiter().GetResult().FirstOrDefault();
-
+            if(oldRole == null)
+            {
+                return BadRequest();
+            }
             ApplicationUser applicationUser = await _unitOfWork.ApplicationUser
                 .GetEntity(u=>u.Id == roleManagementVM.ApplicationUser.Id,isTracked:true);
 
@@ -73,7 +76,9 @@ namespace EmpireApp.Areas.Admin.Controllers
 
             foreach(var user in users)
             {
-                user.role = _userManager.GetRolesAsync(user).GetAwaiter().GetResult().FirstOrDefault();
+                var u = await _userManager.GetRolesAsync(user);
+                if(u != null)
+                    user.role = u.FirstOrDefault()!;
             }
 
             return Json(new { data = users });

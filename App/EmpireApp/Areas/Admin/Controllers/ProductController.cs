@@ -49,7 +49,10 @@ namespace EmpireApp.Areas.Admin.Controllers
             {
                 foreach (var size in productVM.product.ProductSizes)
                 {
-                    productVM.ProductSizeList.FirstOrDefault(u => u.Id == size.Id).isSelected = true;
+                    var s = productVM.ProductSizeList.FirstOrDefault(u => u.Id == size.Id);
+                    if (s == null)
+                        return BadRequest();
+                    s.isSelected = true;
                 }
             }
             return View(productVM);
@@ -148,7 +151,7 @@ namespace EmpireApp.Areas.Admin.Controllers
                 await _unitOfWork.Save();
                 TempData["success"] = "Deleted Successfully";
             }
-            return RedirectToAction(nameof(Upsert), new { id = imageToBeDeleted.ProductId});
+            return RedirectToAction(nameof(Upsert), new { id = imageToBeDeleted?.ProductId});
         }
         public async Task<IActionResult> Index()
         {

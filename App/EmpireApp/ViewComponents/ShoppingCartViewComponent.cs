@@ -15,16 +15,21 @@ namespace EmpireApp.ViewComponents
         }
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            var claimsIdentity = (ClaimsIdentity?)User.Identity;
+            var claim = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier);
 
             if (claim != null)
             {
                 if (HttpContext.Session.GetInt32(SD.SessionCart) == null)
                 {
-                    HttpContext.Session.SetInt32(SD.SessionCart,
-                       _unitOfWork.ShoppingCart.GetAllEntities(u => u.ApplicationUserId == claim.Value)
-                       .GetAwaiter().GetResult().Count());
+                         HttpContext
+                        .Session
+                        .SetInt32(SD.SessionCart,
+                       (await 
+                        _unitOfWork
+                       .ShoppingCart
+                       .GetAllEntities(u => u.ApplicationUserId == claim.Value))
+                       .Count());
                 }
                 return View(HttpContext.Session.GetInt32(SD.SessionCart));
             }
